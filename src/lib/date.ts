@@ -24,9 +24,40 @@ export function formatDateTimeNepal(date: Date): string {
   }).format(date);
 }
 
+/**
+ * Same as getTodayRangeNepal but for an arbitrary yyyy-mm-dd date string
+ * (as produced by an <input type="date"> picked in Nepal Time).
+ */
+export function getDayRangeNepal(dateStr: string): { start: Date; end: Date } {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const startUtcMs = Date.UTC(year, month - 1, day, 0, 0, 0) - NEPAL_OFFSET_MINUTES * 60 * 1000;
+  const endUtcMs = Date.UTC(year, month - 1, day + 1, 0, 0, 0) - NEPAL_OFFSET_MINUTES * 60 * 1000;
+  return { start: new Date(startUtcMs), end: new Date(endUtcMs) };
+}
+
 export function formatDateNepal(date: Date): string {
   return new Intl.DateTimeFormat("en-US", {
     timeZone: "Asia/Kathmandu",
     dateStyle: "medium",
+  }).format(date);
+}
+
+/** yyyy-mm-dd in Nepal Time, for pre-filling <input type="date">. */
+export function toNepalDateInputValue(date: Date): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kathmandu",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+}
+
+/** HH:mm in Nepal Time, for pre-filling <input type="time">. */
+export function toNepalTimeInputValue(date: Date): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kathmandu",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   }).format(date);
 }
