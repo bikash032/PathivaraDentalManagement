@@ -19,10 +19,17 @@ export function PatientPicker({
   initialLabel?: string;
 }) {
   const [query, setQuery] = useState(initialLabel ?? "");
-  const [results, setResults] = useState<PatientResult[]>([]);
+  // Results are tagged with the query they came from, so stale results from a
+  // previous keystroke are simply not rendered — no need to clear state.
+  const [results, setResults] = useState<{ query: string; items: PatientResult[] }>({
+    query: "",
+    items: [],
+  });
   const [selectedId, setSelectedId] = useState(initialPatientId ?? "");
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const searchable = query.trim().length >= 2 && query !== initialLabel;
+  const visibleResults = results.query === query.trim() ? results.items : [];
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -35,26 +42,25 @@ export function PatientPicker({
   }, []);
 
   useEffect(() => {
-    if (query.trim().length < 2 || query === initialLabel) {
-      setResults([]);
-      return;
-    }
+    if (!searchable) return;
+
+    const trimmed = query.trim();
     const controller = new AbortController();
     const timeout = setTimeout(() => {
-      fetch(`/api/patients/search?q=${encodeURIComponent(query.trim())}`, { signal: controller.signal })
+      fetch(`/api/patients/search?q=${encodeURIComponent(trimmed)}`, { signal: controller.signal })
         .then((res) => (res.ok ? res.json() : []))
-        .then((data: PatientResult[]) => {
-          setResults(data);
+        .then((items: PatientResult[]) => {
+          setResults({ query: trimmed, items });
           setOpen(true);
         })
         .catch(() => {});
     }, 250);
+
     return () => {
       clearTimeout(timeout);
       controller.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [query, searchable]);
 
   return (
     <div ref={containerRef} className="relative">
@@ -65,15 +71,15 @@ export function PatientPicker({
           setQuery(e.target.value);
           setSelectedId("");
         }}
-        onFocus={() => results.length > 0 && setOpen(true)}
+        onFocus={() => visibleResults.length > 0 && setOpen(true)}
         placeholder="Search by name, phone, or patient ID"
         required
         className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
       />
       <input type="hidden" name={name} value={selectedId} required />
-      {open && results.length > 0 ? (
+      {open && visibleResults.length > 0 ? (
         <ul className="absolute z-10 mt-1 w-full max-h-56 overflow-auto rounded-md border border-slate-200 bg-white shadow-lg">
-          {results.map((p) => (
+          {visibleResults.map((p) => (
             <li key={p.id}>
               <button
                 type="button"
