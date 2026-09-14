@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateTimeNepal } from "@/lib/date";
+import { formatBSDateTime } from "@/lib/date";
+import { getClinicTimezone } from "@/lib/clinic-settings";
 import type { Prisma } from "@/generated/prisma/client";
 
 const PAGE_SIZE = 50;
@@ -20,6 +21,7 @@ export default async function AuditLogPage({
     ...(params.entityType ? { entityType: params.entityType } : {}),
   };
 
+  const timezone = await getClinicTimezone();
   const [entries, total, entityTypes] = await Promise.all([
     db.auditLog.findMany({
       where,
@@ -92,7 +94,7 @@ export default async function AuditLogPage({
             ) : (
               entries.map((entry) => (
                 <tr key={entry.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-2 text-slate-500">{formatDateTimeNepal(entry.createdAt)}</td>
+                  <td className="px-4 py-2 text-slate-500">{formatBSDateTime(entry.createdAt, timezone)}</td>
                   <td className="px-4 py-2 text-slate-900">{entry.user?.name ?? "System"}</td>
                   <td className="px-4 py-2 font-mono text-xs text-slate-700">{entry.action}</td>
                   <td className="px-4 py-2 text-slate-600">

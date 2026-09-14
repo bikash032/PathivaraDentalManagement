@@ -1,3 +1,22 @@
+/**
+ * Nepal-time primitives for AD dates: day boundaries and the "YYYY-MM-DD" /
+ * "HH:mm" values exchanged with form inputs. Storage and querying are always
+ * AD/UTC.
+ *
+ * User-facing *display* is Bikram Sambat — those formatters live in
+ * `@/lib/bs-date` and are re-exported here so this module stays the single
+ * date entry point for the rest of the app.
+ */
+export {
+  formatBSDate,
+  formatBSDateTime,
+  formatBSDateShort,
+  formatBSDateLong,
+  adToBS,
+  bsToAD,
+  getCurrentBSDate,
+} from "@/lib/bs-date";
+
 const NEPAL_OFFSET_MINUTES = 5 * 60 + 45; // Nepal Time is UTC+5:45
 
 /**
@@ -16,14 +35,6 @@ export function getTodayRangeNepal(now: Date = new Date()): { start: Date; end: 
   return { start: new Date(startUtcMs), end: new Date(endUtcMs) };
 }
 
-export function formatDateTimeNepal(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Kathmandu",
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-}
-
 /**
  * Same as getTodayRangeNepal but for an arbitrary yyyy-mm-dd date string
  * (as produced by an <input type="date"> picked in Nepal Time).
@@ -35,14 +46,7 @@ export function getDayRangeNepal(dateStr: string): { start: Date; end: Date } {
   return { start: new Date(startUtcMs), end: new Date(endUtcMs) };
 }
 
-export function formatDateNepal(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Kathmandu",
-    dateStyle: "medium",
-  }).format(date);
-}
-
-/** yyyy-mm-dd in Nepal Time, for pre-filling <input type="date">. */
+/** yyyy-mm-dd in Nepal Time, for pre-filling a date input. */
 export function toNepalDateInputValue(date: Date): string {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Kathmandu",

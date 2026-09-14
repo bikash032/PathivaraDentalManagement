@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { requirePermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateNepal } from "@/lib/date";
+import { formatBSDate } from "@/lib/date";
 import { formatNPR } from "@/lib/currency";
 import { PrintButton } from "@/components/print-button";
 
@@ -49,7 +49,7 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
         <div className="text-right">
           <p className="text-xs uppercase tracking-wide text-slate-500">Receipt / Invoice</p>
           <p className="font-medium">{invoice.invoiceNumber}</p>
-          <p className="text-sm text-slate-600">{formatDateNepal(invoice.createdAt)}</p>
+          <p className="text-sm text-slate-600">{formatBSDate(invoice.createdAt)}</p>
         </div>
       </div>
 
@@ -106,7 +106,7 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
             <tbody>
               {invoice.payments.map((p) => (
                 <tr key={p.id} className="border-b border-slate-100">
-                  <td className="py-1">{formatDateNepal(p.paymentDate)}</td>
+                  <td className="py-1">{formatBSDate(p.paymentDate)}</td>
                   <td className="py-1">{p.paymentMethod.name}</td>
                   <td className="py-1 text-right">{formatNPR(p.amount)}</td>
                 </tr>

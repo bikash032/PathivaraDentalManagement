@@ -15,7 +15,7 @@ test.describe("settings", () => {
   test("updates the clinic profile", async ({ page }) => {
     await page.goto("/settings");
     await page.getByLabel("Address").fill("Birtamode-5, Jhapa, Nepal");
-    await page.getByRole("button", { name: "Save" }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page.getByText("Clinic profile updated.")).toBeVisible();
     await page.reload();
     await expect(page.getByLabel("Address")).toHaveValue("Birtamode-5, Jhapa, Nepal");

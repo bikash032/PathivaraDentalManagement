@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requirePermission, hasPermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateNepal, formatDateTimeNepal } from "@/lib/date";
+import { formatBSDate, formatBSDateTime } from "@/lib/date";
+import { getClinicTimezone } from "@/lib/clinic-settings";
 import { formatNPR } from "@/lib/currency";
 import { archivePatientAction, reactivatePatientAction } from "../actions";
 
@@ -17,6 +18,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
   const canViewVisits = hasPermission(user, "visit.view");
   const canViewBilling = hasPermission(user, "billing.view");
 
+  const timezone = await getClinicTimezone();
   const [appointments, visits, invoices] = await Promise.all([
     canViewAppointments
       ? db.appointment.findMany({
@@ -96,7 +98,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
         <InfoItem label="Gender" value={patient.gender} />
         <InfoItem
           label="Date of birth"
-          value={patient.dateOfBirth ? formatDateNepal(patient.dateOfBirth) : "—"}
+          value={patient.dateOfBirth ? formatBSDate(patient.dateOfBirth) : "—"}
         />
         <InfoItem label="Approx. age" value={patient.approxAge ? String(patient.approxAge) : "—"} />
         <InfoItem label="Alternate phone" value={patient.alternatePhone ?? "—"} />
@@ -104,7 +106,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
         <InfoItem label="Status" value={patient.status} />
         <InfoItem label="Emergency contact" value={patient.emergencyContactName ?? "—"} />
         <InfoItem label="Emergency phone" value={patient.emergencyContactPhone ?? "—"} />
-        <InfoItem label="Registered" value={formatDateNepal(patient.createdAt)} />
+        <InfoItem label="Registered" value={formatBSDate(patient.createdAt)} />
       </div>
 
       {patient.allergies ? (
@@ -139,7 +141,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
                 {appointments.map((a) => (
                   <li key={a.id} className="py-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-slate-900">{formatDateTimeNepal(a.scheduledAt)}</span>
+                      <span className="text-slate-900">{formatBSDateTime(a.scheduledAt, timezone)}</span>
                       <span className="text-xs text-slate-500">{a.status}</span>
                     </div>
                     <div className="text-xs text-slate-400">Dr. {a.doctor.name}</div>
@@ -160,7 +162,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
                 {visits.map((v) => (
                   <li key={v.id} className="py-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-slate-900">{formatDateNepal(v.visitDate)}</span>
+                      <span className="text-slate-900">{formatBSDate(v.visitDate)}</span>
                       <span className="text-xs text-slate-500">Dr. {v.doctor.name}</span>
                     </div>
                     <div className="text-xs text-slate-400">{v.chiefComplaint}</div>
@@ -195,7 +197,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
                           {inv.invoiceNumber}
                         </Link>
                       </td>
-                      <td className="py-2 pr-4 text-slate-500">{formatDateNepal(inv.createdAt)}</td>
+                      <td className="py-2 pr-4 text-slate-500">{formatBSDate(inv.createdAt)}</td>
                       <td className="py-2 pr-4">{formatNPR(inv.totalAmount)}</td>
                       <td className="py-2 pr-4">{formatNPR(inv.paidAmount)}</td>
                       <td className="py-2 pr-4 text-xs text-slate-500">{inv.status}</td>

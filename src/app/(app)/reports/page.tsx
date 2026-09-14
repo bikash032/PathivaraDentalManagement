@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { getDayRangeNepal, toNepalDateInputValue, currentMonthStartNepal, formatDateNepal } from "@/lib/date";
+import { getDayRangeNepal, toNepalDateInputValue, currentMonthStartNepal, formatBSDate } from "@/lib/date";
 import { formatNPR } from "@/lib/currency";
 import { StatCard } from "@/components/stat-card";
+import { BSDatePicker } from "@/components/bs-date-picker";
 
 const REPORT_TYPES = [
   { key: "collection", label: "Collection" },
@@ -52,29 +53,17 @@ export default async function ReportsPage({
 
       <form className="flex flex-wrap items-end gap-3">
         <input type="hidden" name="type" value={type} />
-        <div className="space-y-1">
+        <div className="w-44 space-y-1">
           <label htmlFor="from" className="block text-xs font-medium text-slate-500">
-            From
+            From (वि.सं.)
           </label>
-          <input
-            id="from"
-            name="from"
-            type="date"
-            defaultValue={from}
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-          />
+          <BSDatePicker id="from" name="from" defaultValue={from} />
         </div>
-        <div className="space-y-1">
+        <div className="w-44 space-y-1">
           <label htmlFor="to" className="block text-xs font-medium text-slate-500">
-            To
+            To (वि.सं.)
           </label>
-          <input
-            id="to"
-            name="to"
-            type="date"
-            defaultValue={to}
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-          />
+          <BSDatePicker id="to" name="to" defaultValue={to} />
         </div>
         <button
           type="submit"
@@ -85,7 +74,7 @@ export default async function ReportsPage({
       </form>
 
       <p className="text-sm text-slate-500">
-        {formatDateNepal(start)} — {formatDateNepal(getDayRangeNepal(to).start)}
+        {formatBSDate(start)} — {formatBSDate(getDayRangeNepal(to).start)}
       </p>
 
       {type === "collection" ? <CollectionReport start={start} end={end} /> : null}
@@ -127,7 +116,7 @@ async function CollectionReport({ start, end }: { start: Date; end: Date }) {
       <Table
         headers={["Date", "Patient", "Invoice", "Method", "Amount"]}
         rows={payments.map((p) => [
-          formatDateNepal(p.paymentDate),
+          formatBSDate(p.paymentDate),
           p.invoice.patient.fullName,
           p.invoice.invoiceNumber,
           p.paymentMethod.name,
@@ -162,7 +151,7 @@ async function OutstandingReport() {
         headers={["Invoice", "Date", "Patient", "Phone", "Total", "Paid", "Remaining"]}
         rows={invoices.map((inv) => [
           inv.invoiceNumber,
-          formatDateNepal(inv.createdAt),
+          formatBSDate(inv.createdAt),
           inv.patient.fullName,
           inv.patient.phone,
           formatNPR(inv.totalAmount),
@@ -189,7 +178,7 @@ async function PatientRegistrationReport({ start, end }: { start: Date; end: Dat
       <Table
         headers={["Registered", "Patient ID", "Name", "Phone", "Gender"]}
         rows={patients.map((p) => [
-          formatDateNepal(p.createdAt),
+          formatBSDate(p.createdAt),
           p.patientCode,
           p.fullName,
           p.phone,
@@ -225,7 +214,7 @@ async function AppointmentReport({ start, end }: { start: Date; end: Date }) {
       <Table
         headers={["Date", "Patient", "Doctor", "Status"]}
         rows={appointments.map((a) => [
-          formatDateNepal(a.scheduledAt),
+          formatBSDate(a.scheduledAt),
           a.patient.fullName,
           a.doctor.name,
           a.status.replace("_", " "),

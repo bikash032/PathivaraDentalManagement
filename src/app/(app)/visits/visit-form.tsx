@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { PatientPicker } from "@/components/patient-picker";
+import { BSDatePicker } from "@/components/bs-date-picker";
 import { PrescriptionItemsEditor } from "./prescription-items-editor";
 import type { VisitFormState } from "./actions";
 import type { PrescriptionItemInput } from "@/lib/validation/visit";
@@ -112,14 +113,12 @@ export function VisitForm({
 
         <div className="space-y-1">
           <label htmlFor="nextAppointmentDate" className="block text-sm font-medium text-slate-700">
-            Suggested next appointment (optional)
+            Suggested next appointment (वि.सं., optional)
           </label>
-          <input
+          <BSDatePicker
             id="nextAppointmentDate"
             name="nextAppointmentDate"
-            type="date"
             defaultValue={initialValues?.nextAppointmentDate}
-            className={inputClass}
           />
         </div>
       </div>

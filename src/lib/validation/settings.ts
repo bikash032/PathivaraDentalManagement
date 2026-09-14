@@ -12,3 +12,19 @@ export const clinicProfileSchema = z.object({
 export const paymentMethodSchema = z.object({
   name: z.string().trim().min(1, "Name is required."),
 });
+
+export const CLINIC_TIMEZONE_KEY = "clinic.timezone";
+export const DEFAULT_CLINIC_TIMEZONE = "Asia/Kathmandu";
+
+/** IANA zones offered in Settings. Bikram Sambat dates are always resolved
+ *  in Nepal Time, so this governs time-of-day display. */
+export const SUPPORTED_TIMEZONES = [
+  "Asia/Kathmandu",
+  "Asia/Kolkata",
+  "Asia/Dhaka",
+  "UTC",
+] as const;
+
+export const timezoneSchema = z.object({
+  timezone: z.enum(SUPPORTED_TIMEZONES),
+});

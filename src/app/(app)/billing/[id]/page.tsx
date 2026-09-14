@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requirePermission, hasPermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateNepal, toNepalDateInputValue } from "@/lib/date";
+import { formatBSDate, toNepalDateInputValue } from "@/lib/date";
 import { formatNPR } from "@/lib/currency";
 import { RecordPaymentForm } from "../record-payment-form";
 import { recordPaymentAction, voidPaymentAction, cancelInvoiceAction } from "../actions";
@@ -36,7 +36,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             <Link href={`/patients/${invoice.patient.id}`} className="underline">
               {invoice.patient.fullName}
             </Link>{" "}
-            · {formatDateNepal(invoice.createdAt)}
+            · {formatBSDate(invoice.createdAt)}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -144,7 +144,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
                       {formatNPR(p.amount)}
                     </span>{" "}
                     <span className="text-xs text-slate-400">
-                      {p.paymentMethod.name} · {formatDateNepal(p.paymentDate)}
+                      {p.paymentMethod.name} · {formatBSDate(p.paymentDate)}
                     </span>
                   </div>
                   {!p.voidedAt && hasPermission(user, "payment.void") ? (

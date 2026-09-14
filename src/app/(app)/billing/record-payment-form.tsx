@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { BSDatePicker } from "@/components/bs-date-picker";
 import type { PaymentFormState } from "./actions";
 
 type PaymentMethod = { id: string; name: string };
@@ -52,9 +53,9 @@ export function RecordPaymentForm({
         </div>
         <div className="space-y-1">
           <label htmlFor="paymentDate" className="block text-sm font-medium text-slate-700">
-            Date
+            Date (वि.सं.)
           </label>
-          <input id="paymentDate" name="paymentDate" type="date" defaultValue={todayValue} required className={inputClass} />
+          <BSDatePicker id="paymentDate" name="paymentDate" defaultValue={todayValue} required />
         </div>
       </div>
 

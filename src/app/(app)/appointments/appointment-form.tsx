@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { PatientPicker } from "@/components/patient-picker";
+import { BSDatePicker } from "@/components/bs-date-picker";
 import { APPOINTMENT_DURATIONS } from "@/lib/validation/appointment";
 import type { AppointmentFormState } from "./actions";
 
@@ -109,16 +110,9 @@ export function AppointmentForm({
 
         <div className="space-y-1">
           <label htmlFor="date" className="block text-sm font-medium text-slate-700">
-            Date
+            Date (वि.सं.)
           </label>
-          <input
-            id="date"
-            name="date"
-            type="date"
-            defaultValue={initialValues?.date}
-            required
-            className={inputClass}
-          />
+          <BSDatePicker id="date" name="date" defaultValue={initialValues?.date} required />
           {errors.date ? <p className="text-xs text-red-600">{errors.date}</p> : null}
         </div>
 

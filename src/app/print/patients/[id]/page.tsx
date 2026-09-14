@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { requirePermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateNepal } from "@/lib/date";
+import { formatBSDate } from "@/lib/date";
 import { PrintButton } from "@/components/print-button";
 
 export default async function PrintPatientPage({ params }: { params: Promise<{ id: string }> }) {
@@ -27,14 +27,14 @@ export default async function PrintPatientPage({ params }: { params: Promise<{ i
 
       <div className="grid grid-cols-2 gap-4 border-y border-slate-200 py-4 text-sm">
         <Field label="Patient ID" value={patient.patientCode} />
-        <Field label="Registered" value={formatDateNepal(patient.createdAt)} />
+        <Field label="Registered" value={formatBSDate(patient.createdAt)} />
         <Field label="Full name" value={patient.fullName} />
         <Field label="Gender" value={patient.gender} />
         <Field label="Phone" value={patient.phone} />
         <Field label="Alternate phone" value={patient.alternatePhone} />
         <Field
           label="Date of birth"
-          value={patient.dateOfBirth ? formatDateNepal(patient.dateOfBirth) : patient.approxAge ? `~${patient.approxAge} years` : null}
+          value={patient.dateOfBirth ? formatBSDate(patient.dateOfBirth) : patient.approxAge ? `~${patient.approxAge} years` : null}
         />
         <Field label="Address" value={patient.address} />
         <Field label="Emergency contact" value={patient.emergencyContactName} />

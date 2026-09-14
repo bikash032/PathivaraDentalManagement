@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { requireUser, hasPermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { getTodayRangeNepal, formatDateTimeNepal } from "@/lib/date";
+import { getTodayRangeNepal, formatBSDateTime } from "@/lib/date";
+import { getClinicTimezone } from "@/lib/clinic-settings";
 import { formatNPR } from "@/lib/currency";
 import { StatCard } from "@/components/stat-card";
 
 export default async function DashboardPage() {
   const user = await requireUser();
   const { start, end } = getTodayRangeNepal();
+  const timezone = await getClinicTimezone();
 
   const canViewAppointments = hasPermission(user, "appointment.view");
   const canViewBilling = hasPermission(user, "billing.view");
@@ -84,7 +86,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-xl font-semibold text-slate-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-500">{formatDateTimeNepal(new Date())}</p>
+        <p className="mt-1 text-sm text-slate-500">{formatBSDateTime(new Date(), timezone)}</p>
       </div>
 
       {canViewAppointments ? (
@@ -172,7 +174,7 @@ export default async function DashboardPage() {
                   <li key={entry.id} className="py-2 text-sm">
                     <span className="text-slate-900">{entry.user?.name ?? "System"}</span>{" "}
                     <span className="text-slate-500">{entry.action}</span>
-                    <div className="text-xs text-slate-400">{formatDateTimeNepal(entry.createdAt)}</div>
+                    <div className="text-xs text-slate-400">{formatBSDateTime(entry.createdAt, timezone)}</div>
                   </li>
                 ))}
               </ul>

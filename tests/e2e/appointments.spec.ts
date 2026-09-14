@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { pickBSDate } from "./bs-helpers";
 
 const SUPER_ADMIN_EMAIL = process.env.SEED_SUPER_ADMIN_EMAIL!;
 const SUPER_ADMIN_PASSWORD = process.env.SEED_SUPER_ADMIN_PASSWORD!;
@@ -39,7 +40,7 @@ test.describe("appointment management", () => {
     await page.getByText(patientName, { exact: false }).first().waitFor();
     await page.getByRole("button", { name: new RegExp(patientName) }).click();
     await page.getByLabel("Doctor").selectOption({ label: doctorName });
-    await page.getByLabel("Date").fill("2027-01-15");
+    await pickBSDate(page, "Date (वि.सं.)", "2027-01-15");
     await page.getByLabel("Time").fill("10:00");
     await page.getByRole("button", { name: "Book appointment" }).click();
 
@@ -51,7 +52,7 @@ test.describe("appointment management", () => {
     await page.getByText(patientName, { exact: false }).first().waitFor();
     await page.getByRole("button", { name: new RegExp(patientName) }).click();
     await page.getByLabel("Doctor").selectOption({ label: doctorName });
-    await page.getByLabel("Date").fill("2027-01-15");
+    await pickBSDate(page, "Date (वि.सं.)", "2027-01-15");
     await page.getByLabel("Time").fill("10:15");
     await page.getByRole("button", { name: "Book appointment" }).click();
     await expect(page.getByText(/already has an appointment that overlaps/)).toBeVisible();

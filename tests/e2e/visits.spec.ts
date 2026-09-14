@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { pickBSDate } from "./bs-helpers";
 
 const SUPER_ADMIN_EMAIL = process.env.SEED_SUPER_ADMIN_EMAIL!;
 const SUPER_ADMIN_PASSWORD = process.env.SEED_SUPER_ADMIN_PASSWORD!;
@@ -37,7 +38,7 @@ test.describe("visits and clinical records", () => {
     await page.getByPlaceholder("Search by name, phone, or patient ID").fill(patientName);
     await page.getByRole("button", { name: new RegExp(patientName) }).click();
     await page.getByLabel("Doctor").selectOption({ label: doctorName });
-    await page.getByLabel("Date").fill("2027-02-10");
+    await pickBSDate(page, "Date (वि.सं.)", "2027-02-10");
     await page.getByLabel("Time").fill("11:00");
     await page.getByRole("button", { name: "Book appointment" }).click();
     await expect(page.getByText(doctorName)).toBeVisible();

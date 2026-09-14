@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { BSDatePicker } from "@/components/bs-date-picker";
 import type { PatientFormState } from "./actions";
 
 type PatientFormValues = {
@@ -133,14 +134,8 @@ export function PatientForm({
           />
         </Field>
 
-        <Field label="Date of birth (if known)" name="dateOfBirth" error={errors.dateOfBirth}>
-          <input
-            id="dateOfBirth"
-            name="dateOfBirth"
-            type="date"
-            defaultValue={values.dateOfBirth}
-            className={inputClass}
-          />
+        <Field label="Date of birth (वि.सं., if known)" name="dateOfBirth" error={errors.dateOfBirth}>
+          <BSDatePicker id="dateOfBirth" name="dateOfBirth" defaultValue={values.dateOfBirth} />
         </Field>
 
         <Field label="Approx. age (if DOB unknown)" name="approxAge" error={errors.approxAge}>

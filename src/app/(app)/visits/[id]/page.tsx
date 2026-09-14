@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requirePermission, hasPermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateNepal } from "@/lib/date";
+import { formatBSDate } from "@/lib/date";
 
 export default async function VisitDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requirePermission("visit.view");
@@ -22,7 +22,7 @@ export default async function VisitDetailPage({ params }: { params: Promise<{ id
     <div className="max-w-3xl space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">{formatDateNepal(visit.visitDate)}</h1>
+          <h1 className="text-xl font-semibold text-slate-900">{formatBSDate(visit.visitDate)}</h1>
           <p className="mt-1 text-sm text-slate-500">
             <Link href={`/patients/${visit.patient.id}`} className="underline">
               {visit.patient.fullName}
@@ -49,7 +49,7 @@ export default async function VisitDetailPage({ params }: { params: Promise<{ id
         <Field label="Follow-up instructions" value={visit.followUpInstructions} />
         <Field
           label="Suggested next appointment"
-          value={visit.nextAppointmentDate ? formatDateNepal(visit.nextAppointmentDate) : null}
+          value={visit.nextAppointmentDate ? formatBSDate(visit.nextAppointmentDate) : null}
         />
       </div>
 

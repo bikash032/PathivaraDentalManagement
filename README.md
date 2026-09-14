@@ -60,6 +60,53 @@ npm run test:e2e                  # end-to-end workflows
 | [DEPLOYMENT.md](docs/DEPLOYMENT.md) | Clinic server deployment and secure remote access |
 | [BACKUP.md](docs/BACKUP.md) | Backup, restore and disaster recovery |
 
+## Date System
+
+The application uses:
+
+- **Bikram Sambat (BS)** for all user-facing dates
+- **Gregorian/AD `DateTime`** for database storage
+- **Asia/Kathmandu** as the default clinic timezone (configurable in Settings)
+
+### How BS ↔ AD conversion works
+
+BS exists only at the presentation layer. PostgreSQL never stores a BS value:
+
+```
+UI (BS)  →  bsToADInput()  →  server action  →  Prisma  →  PostgreSQL (AD DateTime)
+UI (BS)  ←  formatBSDate() ←  server component ← Prisma ←  PostgreSQL (AD DateTime)
+```
+
+Keeping AD in the database is what makes sorting, range queries, appointment
+lookups, reports and any future integration work correctly — BS month lengths
+vary (29–32 days) and cannot be compared arithmetically.
+
+The BS date picker submits the equivalent **AD `YYYY-MM-DD`** in a hidden
+field, so server actions receive exactly what they always did.
+
+All conversion and formatting lives in [src/lib/bs-date.ts](src/lib/bs-date.ts) —
+never convert dates inline in a component:
+
+| Function | Output |
+|---|---|
+| `formatBSDateShort(date)` | `२०८३/०५/३०` |
+| `formatBSDate(date)` | `३० भदौ २०८३` |
+| `formatBSDateLong(date)` | `३० भदौ २०८३, मंगलबार` |
+| `formatBSDateTime(date, tz)` | `३० भदौ २०८३, १०:३० AM` |
+| `adToBS(date)` / `bsToAD(bs)` | conversion between calendars |
+| `getCurrentBSDate()` | today in BS, computed dynamically |
+
+Conversion uses the [`bikram-sambat`](https://www.npmjs.com/package/bikram-sambat)
+package (Apache-2.0), which carries real per-year month-length tables rather
+than assuming fixed months. Supported range: **BS 1970–2090** (AD 1913–2034);
+dates outside it raise a `BSDateError` instead of converting incorrectly.
+
+### Timezone
+
+A BS calendar day is defined in Nepal Time, so BS dates are always resolved in
+NPT (UTC+5:45) regardless of the server's own timezone. The **clinic timezone**
+setting governs the clock time displayed alongside dates.
+
 ## Notes for this clinic
 
 - Currency is NPR, stored as decimal and computed in integer paisa — never
@@ -67,5 +114,5 @@ npm run test:e2e                  # end-to-end workflows
 - Phone numbers validate against Nepali mobile formats (96/97/98 + 8 digits).
 - All "today" and date-range logic is computed in Nepal Time (UTC+5:45)
   regardless of the server's own timezone.
-- Dates are stored as proper timestamps; Bikram Sambat display can be layered
-  on later without touching storage.
+- Staff see Bikram Sambat dates throughout; storage stays Gregorian (see
+  [Date System](#date-system)).

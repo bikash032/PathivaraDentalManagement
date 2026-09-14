@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { requirePermission, hasPermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { getDayRangeNepal, toNepalDateInputValue, formatDateNepal } from "@/lib/date";
+import { getDayRangeNepal, toNepalDateInputValue } from "@/lib/date";
+import { formatBSDateLong, formatNepalTime } from "@/lib/bs-date";
+import { getClinicTimezone } from "@/lib/clinic-settings";
 import type { Prisma, AppointmentStatus } from "@/generated/prisma/client";
 import { StatusButtons } from "./status-buttons";
 import { DateNavForm } from "./date-nav-form";
@@ -48,6 +50,7 @@ export default async function AppointmentsPage({
     ...(params.status ? { status: params.status as AppointmentStatus } : {}),
   };
 
+  const timezone = await getClinicTimezone();
   const [appointments, doctors] = await Promise.all([
     db.appointment.findMany({
       where,
@@ -128,7 +131,7 @@ export default async function AppointmentsPage({
         </form>
       </div>
 
-      <p className="text-sm text-slate-500">{formatDateNepal(start)}</p>
+      <p className="text-sm text-slate-500">{formatBSDateLong(start)}</p>
 
       <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
         <table className="min-w-full divide-y divide-slate-200 text-sm">
@@ -154,13 +157,7 @@ export default async function AppointmentsPage({
             ) : (
               appointments.map((a) => (
                 <tr key={a.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-2 text-slate-900">
-                    {new Intl.DateTimeFormat("en-US", {
-                      timeZone: "Asia/Kathmandu",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }).format(a.scheduledAt)}
-                  </td>
+                  <td className="px-4 py-2 text-slate-900">{formatNepalTime(a.scheduledAt, timezone)}</td>
                   <td className="px-4 py-2">
                     <Link href={`/appointments/${a.id}`} className="font-medium text-slate-900 hover:underline">
                       {a.patient.fullName}

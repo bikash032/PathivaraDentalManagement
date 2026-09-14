@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateNepal } from "@/lib/date";
+import { formatBSDate } from "@/lib/date";
 import { formatNPR } from "@/lib/currency";
 import type { Prisma, InvoiceStatus } from "@/generated/prisma/client";
 
@@ -91,7 +91,7 @@ export default async function BillingPage({
                     </Link>
                   </td>
                   <td className="px-4 py-2 text-slate-600">{inv.patient.fullName}</td>
-                  <td className="px-4 py-2 text-slate-500">{formatDateNepal(inv.createdAt)}</td>
+                  <td className="px-4 py-2 text-slate-500">{formatBSDate(inv.createdAt)}</td>
                   <td className="px-4 py-2 text-slate-600">{formatNPR(inv.totalAmount)}</td>
                   <td className="px-4 py-2 text-slate-600">{formatNPR(inv.paidAmount)}</td>
                   <td className="px-4 py-2">

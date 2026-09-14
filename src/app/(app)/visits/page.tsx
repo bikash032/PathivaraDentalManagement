@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateNepal } from "@/lib/date";
+import { formatBSDate } from "@/lib/date";
 
 const PAGE_SIZE = 20;
 
@@ -54,7 +54,7 @@ export default async function VisitsPage({ searchParams }: { searchParams: Promi
             ) : (
               visits.map((v) => (
                 <tr key={v.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-2 text-slate-500">{formatDateNepal(v.visitDate)}</td>
+                  <td className="px-4 py-2 text-slate-500">{formatBSDate(v.visitDate)}</td>
                   <td className="px-4 py-2">
                     <Link href={`/visits/${v.id}`} className="font-medium text-slate-900 hover:underline">
                       {v.patient.fullName}

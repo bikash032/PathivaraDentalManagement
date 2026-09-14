@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requirePermission, hasPermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { formatDateTimeNepal } from "@/lib/date";
+import { formatBSDateTime } from "@/lib/date";
+import { getClinicTimezone } from "@/lib/clinic-settings";
 import { StatusButtons } from "../status-buttons";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -19,6 +20,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
   const user = await requirePermission("appointment.view");
   const { id } = await params;
 
+  const timezone = await getClinicTimezone();
   const appointment = await db.appointment.findUnique({
     where: { id },
     include: {
@@ -33,7 +35,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
     <div className="max-w-2xl space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">{formatDateTimeNepal(appointment.scheduledAt)}</h1>
+          <h1 className="text-xl font-semibold text-slate-900">{formatBSDateTime(appointment.scheduledAt, timezone)}</h1>
           <p className="mt-1 text-sm text-slate-500">
             <Link href={`/patients/${appointment.patient.id}`} className="underline">
               {appointment.patient.fullName}

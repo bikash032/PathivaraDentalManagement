@@ -5,7 +5,12 @@ import { requirePermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
 import { getRequestIp } from "@/lib/auth/session";
 import { writeAuditLog } from "@/lib/audit";
-import { clinicProfileSchema, paymentMethodSchema } from "@/lib/validation/settings";
+import {
+  clinicProfileSchema,
+  paymentMethodSchema,
+  timezoneSchema,
+  CLINIC_TIMEZONE_KEY,
+} from "@/lib/validation/settings";
 import { flattenZodErrors } from "@/lib/validation/zod-helpers";
 
 export type SettingsFormState = { error?: string; success?: string; fieldErrors?: Record<string, string> };
@@ -66,6 +71,36 @@ export async function updateClinicProfileAction(
 
   revalidatePath("/settings");
   return { success: "Clinic profile updated." };
+}
+
+export async function updateTimezoneAction(
+  _prevState: SettingsFormState,
+  formData: FormData
+): Promise<SettingsFormState> {
+  const user = await requirePermission("settings.manage");
+
+  const parsed = timezoneSchema.safeParse({ timezone: formData.get("timezone") });
+  if (!parsed.success) {
+    return { error: "Select a supported timezone." };
+  }
+
+  await db.appSetting.upsert({
+    where: { key: CLINIC_TIMEZONE_KEY },
+    update: { value: parsed.data.timezone },
+    create: { key: CLINIC_TIMEZONE_KEY, value: parsed.data.timezone },
+  });
+
+  await writeAuditLog({
+    userId: user.id,
+    action: "settings.timezone_update",
+    entityType: "AppSetting",
+    entityId: CLINIC_TIMEZONE_KEY,
+    metadata: { timezone: parsed.data.timezone },
+    ipAddress: await getRequestIp(),
+  });
+
+  revalidatePath("/settings");
+  return { success: `Clinic timezone set to ${parsed.data.timezone}.` };
 }
 
 export async function createPaymentMethodAction(
