@@ -52,6 +52,12 @@ export function toNepalDateInputValue(date: Date): string {
   }).format(date);
 }
 
+/** yyyy-mm-01 for the current month in Nepal Time — a sensible default report start date. */
+export function currentMonthStartNepal(): string {
+  const today = toNepalDateInputValue(new Date());
+  return `${today.slice(0, 7)}-01`;
+}
+
 /** HH:mm in Nepal Time, for pre-filling <input type="time">. */
 export function toNepalTimeInputValue(date: Date): string {
   return new Intl.DateTimeFormat("en-GB", {
