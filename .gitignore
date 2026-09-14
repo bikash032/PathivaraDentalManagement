@@ -47,8 +47,13 @@ next-env.d.ts
 .idea
 
 # clinic data — never commit patient data, dumps, or backups
+# (Prisma migration SQL files are the exception — they're schema history, not data)
 *.sql
+!prisma/migrations/**/*.sql
 *.dump
 /backups
 /uploads
 prisma/dev.db*
+
+# generated prisma client
+/src/generated/prisma
