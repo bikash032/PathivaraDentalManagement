@@ -24,6 +24,13 @@ import type { Prisma, InvoiceStatus } from "@/generated/prisma/client";
 export type InvoiceFormState = { error?: string; fieldErrors?: Record<string, string> };
 export type PaymentFormState = { error?: string; fieldErrors?: Record<string, string> };
 
+/**
+ * A business-rule failure whose message is safe to show the user. Anything
+ * else that throws (Prisma errors, bugs) must not have its message surfaced,
+ * so it can't leak schema or internal details into the UI.
+ */
+class BillingRuleError extends Error {}
+
 async function recalculateInvoiceTotals(tx: Prisma.TransactionClient, invoiceId: string) {
   const invoice = await tx.invoice.findUniqueOrThrow({ where: { id: invoiceId } });
   const paymentsSum = await tx.payment.aggregate({
@@ -126,12 +133,12 @@ export async function recordPaymentAction(
     await db.$transaction(async (tx) => {
       const invoice = await tx.invoice.findUniqueOrThrow({ where: { id: invoiceId } });
       if (invoice.status === "CANCELLED") {
-        throw new Error("Cannot record a payment against a cancelled invoice.");
+        throw new BillingRuleError("Cannot record a payment against a cancelled invoice.");
       }
       const total = Number(invoice.totalAmount);
       const paid = Number(invoice.paidAmount);
       if (exceedsRemainingBalance(data.amount, total, paid)) {
-        throw new Error(
+        throw new BillingRuleError(
           `Amount exceeds the remaining balance (रु. ${remainingBalance(total, paid).toFixed(2)}).`
         );
       }
@@ -151,7 +158,9 @@ export async function recordPaymentAction(
       await recalculateInvoiceTotals(tx, invoiceId);
     });
   } catch (e) {
-    return { error: e instanceof Error ? e.message : "Could not record payment." };
+    if (e instanceof BillingRuleError) return { error: e.message };
+    console.error("recordPaymentAction failed", e);
+    return { error: "Could not record this payment. Please try again." };
   }
 
   await writeAuditLog({
@@ -198,7 +207,7 @@ export async function cancelInvoiceAction(invoiceId: string): Promise<void> {
 
   const invoice = await db.invoice.findUniqueOrThrow({ where: { id: invoiceId } });
   if (Number(invoice.paidAmount) > 0) {
-    throw new Error("Void payments before cancelling this invoice.");
+    throw new BillingRuleError("Void payments before cancelling this invoice.");
   }
 
   await db.invoice.update({
