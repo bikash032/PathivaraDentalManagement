@@ -59,6 +59,7 @@ const ADMIN_PERMISSIONS: PermissionKey[] = [
   "billing.view", "invoice.create", "invoice.update", "invoice.cancel", "payment.record", "payment.void",
   "report.view",
   "audit.view",
+  "settings.manage",
 ];
 
 const RECEPTION_PERMISSIONS: PermissionKey[] = [
