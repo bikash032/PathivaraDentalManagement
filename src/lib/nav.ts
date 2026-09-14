@@ -15,5 +15,6 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/billing", label: "Billing", permission: "billing.view" },
   { href: "/reports", label: "Reports", permission: "report.view" },
   { href: "/users", label: "Users", permission: "user.manage" },
+  { href: "/audit", label: "Audit log", permission: "audit.view" },
   { href: "/settings", label: "Settings", permission: "settings.manage" },
 ];
