@@ -13,6 +13,12 @@ import {
   recordPaymentSchema,
 } from "@/lib/validation/billing";
 import { flattenZodErrors } from "@/lib/validation/zod-helpers";
+import {
+  calculateInvoiceTotals,
+  resolveInvoiceStatus,
+  remainingBalance,
+  exceedsRemainingBalance,
+} from "@/lib/money";
 import type { Prisma, InvoiceStatus } from "@/generated/prisma/client";
 
 export type InvoiceFormState = { error?: string; fieldErrors?: Record<string, string> };
@@ -27,12 +33,8 @@ async function recalculateInvoiceTotals(tx: Prisma.TransactionClient, invoiceId:
   const paidAmount = Number(paymentsSum._sum.amount ?? 0);
   const totalAmount = Number(invoice.totalAmount);
 
-  let status: InvoiceStatus = invoice.status;
-  if (invoice.status !== "CANCELLED") {
-    if (paidAmount <= 0) status = "UNPAID";
-    else if (paidAmount < totalAmount) status = "PARTIALLY_PAID";
-    else status = "PAID";
-  }
+  const status: InvoiceStatus =
+    invoice.status === "CANCELLED" ? "CANCELLED" : resolveInvoiceStatus(totalAmount, paidAmount);
 
   await tx.invoice.update({ where: { id: invoiceId }, data: { paidAmount, status } });
 }
@@ -54,9 +56,10 @@ export async function createInvoiceAction(
   }
 
   const header = parsedHeader.data;
-  const lineTotals = items.map((i) => Math.max(0, i.quantity * i.unitPrice - i.discount));
-  const subtotal = lineTotals.reduce((a, b) => a + b, 0);
-  const totalAmount = Math.max(0, subtotal - header.discountAmount);
+  const { lineTotals, subtotal, discountAmount, totalAmount } = calculateInvoiceTotals(
+    items,
+    header.discountAmount
+  );
   const invoiceNumber = await nextInvoiceNumber();
 
   const invoice = await db.$transaction((tx) =>
@@ -66,7 +69,7 @@ export async function createInvoiceAction(
         patientId: header.patientId,
         visitId: header.visitId || null,
         subtotal,
-        discountAmount: header.discountAmount,
+        discountAmount,
         totalAmount,
         notes: header.notes || null,
         createdById: user.id,
@@ -125,9 +128,12 @@ export async function recordPaymentAction(
       if (invoice.status === "CANCELLED") {
         throw new Error("Cannot record a payment against a cancelled invoice.");
       }
-      const remaining = Number(invoice.totalAmount) - Number(invoice.paidAmount);
-      if (data.amount > remaining + 0.01) {
-        throw new Error(`Amount exceeds the remaining balance (रु. ${remaining.toFixed(2)}).`);
+      const total = Number(invoice.totalAmount);
+      const paid = Number(invoice.paidAmount);
+      if (exceedsRemainingBalance(data.amount, total, paid)) {
+        throw new Error(
+          `Amount exceeds the remaining balance (रु. ${remainingBalance(total, paid).toFixed(2)}).`
+        );
       }
 
       await tx.payment.create({
