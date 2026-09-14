@@ -40,6 +40,13 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href={`/print/invoices/${invoice.id}`}
+            target="_blank"
+            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Print receipt
+          </Link>
           <span
             className={`rounded-full px-2 py-1 text-xs font-medium ${
               invoice.status === "PAID"

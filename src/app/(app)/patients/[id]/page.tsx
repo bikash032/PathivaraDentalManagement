@@ -53,6 +53,13 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
           </p>
         </div>
         <div className="flex gap-2">
+          <Link
+            href={`/print/patients/${patient.id}`}
+            target="_blank"
+            className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Print
+          </Link>
           {hasPermission(user, "patient.update") ? (
             <Link
               href={`/patients/${patient.id}/edit`}
