@@ -13,13 +13,13 @@ export default async function SettingsLayout({ children }: { children: React.Rea
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">Settings</h1>
-        <div className="mt-3 flex gap-4 border-b border-slate-200">
+        <h1 className="text-xl font-semibold text-ink">Settings</h1>
+        <div className="mt-3 flex gap-4 border-b border-line">
           {tabs.map((tab) => (
             <Link
               key={tab.href}
               href={tab.href}
-              className="border-b-2 border-transparent px-1 pb-2 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-900"
+              className="border-b-2 border-transparent px-1 pb-2 text-sm font-medium text-ink-muted hover:border-field-line hover:text-ink"
             >
               {tab.label}
             </Link>

@@ -30,9 +30,9 @@ export default async function NewVisitPage({
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">New visit</h1>
+        <h1 className="text-xl font-semibold text-ink">New visit</h1>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div className="rounded-lg border border-line bg-surface p-6">
         <VisitForm
           action={createVisitAction}
           doctors={doctors}

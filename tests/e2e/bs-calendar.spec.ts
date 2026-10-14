@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { uniquePhone } from "./fixtures";
 import bikramSambat from "bikram-sambat";
 import { pickBSDate, expectedBSText, toNepaliNumerals } from "./bs-helpers";
 
@@ -72,7 +73,7 @@ test.describe("Bikram Sambat calendar", () => {
 
     await page.goto("/patients/new");
     await page.getByLabel("Full name").fill(patientName);
-    await page.getByLabel("Phone", { exact: true }).fill("9812223334");
+    await page.getByLabel("Phone", { exact: true }).fill(uniquePhone());
     await page.getByRole("button", { name: "Register patient" }).click();
     await expect(page.getByRole("heading", { name: patientName })).toBeVisible();
 
@@ -99,7 +100,7 @@ test.describe("Bikram Sambat calendar", () => {
 
     await page.goto("/patients/new");
     await page.getByLabel("Full name").fill(patientName);
-    await page.getByLabel("Phone", { exact: true }).fill("9813334445");
+    await page.getByLabel("Phone", { exact: true }).fill(uniquePhone());
     await pickBSDate(page, "Date of birth (वि.सं., if known)", dobAD);
     await page.getByRole("button", { name: "Register patient" }).click();
 

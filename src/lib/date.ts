@@ -17,6 +17,15 @@ export {
   getCurrentBSDate,
 } from "@/lib/bs-date";
 
+import {
+  getCurrentBSDate as currentBSDate,
+  bsToADInput,
+  bsWeekday,
+  bsDaysInMonth,
+  addBSMonths,
+  type BSDate,
+} from "@/lib/bs-date";
+
 const NEPAL_OFFSET_MINUTES = 5 * 60 + 45; // Nepal Time is UTC+5:45
 
 /**
@@ -70,4 +79,75 @@ export function toNepalTimeInputValue(date: Date): string {
     minute: "2-digit",
     hour12: false,
   }).format(date);
+}
+
+// ---------------------------------------------------------------------------
+// AD day arithmetic and BS-aware quick ranges (used by date-range filters)
+// ---------------------------------------------------------------------------
+
+/**
+ * Shift an AD "YYYY-MM-DD" by whole days. Uses UTC arithmetic so it never
+ * drifts across a DST or timezone boundary — the string in, string out.
+ */
+export function addADDays(dateStr: string, delta: number): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + delta)).toISOString().slice(0, 10);
+}
+
+/** Whole days from `from` to `to` (0 when they are the same day). */
+export function adDaysBetween(from: string, to: string): number {
+  const [fy, fm, fd] = from.split("-").map(Number);
+  const [ty, tm, td] = to.split("-").map(Number);
+  const ms = Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd);
+  return Math.round(ms / 86_400_000);
+}
+
+export const QUICK_RANGES = [
+  { key: "today", label: "Today" },
+  { key: "yesterday", label: "Yesterday" },
+  { key: "this-week", label: "This week" },
+  { key: "this-month", label: "This month" },
+  { key: "last-month", label: "Last month" },
+] as const;
+
+export type QuickRangeKey = (typeof QUICK_RANGES)[number]["key"];
+
+function bsMonthRange(year: number, month: number): { from: string; to: string } {
+  return {
+    from: bsToADInput({ year, month, day: 1 }),
+    to: bsToADInput({ year, month, day: bsDaysInMonth(year, month) }),
+  };
+}
+
+/**
+ * Preset ranges as inclusive AD "YYYY-MM-DD" bounds.
+ *
+ * Weeks and months follow the *Bikram Sambat* calendar, which is what the
+ * clinic sees: the week starts on आइतबार (Sunday) and a BS month is 29–32
+ * days long, so its end is looked up rather than assumed.
+ */
+export function bsQuickRange(
+  key: QuickRangeKey,
+  today: BSDate = currentBSDate()
+): { from: string; to: string } {
+  const todayAD = bsToADInput(today);
+
+  switch (key) {
+    case "today":
+      return { from: todayAD, to: todayAD };
+    case "yesterday": {
+      const day = addADDays(todayAD, -1);
+      return { from: day, to: day };
+    }
+    case "this-week": {
+      const from = addADDays(todayAD, -bsWeekday(today));
+      return { from, to: addADDays(from, 6) };
+    }
+    case "this-month":
+      return bsMonthRange(today.year, today.month);
+    case "last-month": {
+      const prev = addBSMonths(today.year, today.month, -1);
+      return bsMonthRange(prev.year, prev.month);
+    }
+  }
 }

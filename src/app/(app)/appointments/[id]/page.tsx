@@ -35,9 +35,9 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
     <div className="max-w-2xl space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">{formatBSDateTime(appointment.scheduledAt, timezone)}</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            <Link href={`/patients/${appointment.patient.id}`} className="underline">
+          <h1 className="text-xl font-semibold text-ink">{formatBSDateTime(appointment.scheduledAt, timezone)}</h1>
+          <p className="mt-1 text-sm text-ink-muted">
+            <Link href={`/patients/${appointment.patient.id}`} className="underline text-primary hover:text-primary-hover">
               {appointment.patient.fullName}
             </Link>{" "}
             · Dr. {appointment.doctor.name}
@@ -47,7 +47,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
           {hasPermission(user, "appointment.update") && appointment.status !== "COMPLETED" ? (
             <Link
               href={`/appointments/${appointment.id}/edit`}
-              className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-md border border-field-line bg-surface px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
             >
               Reschedule
             </Link>
@@ -55,7 +55,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
           {hasPermission(user, "visit.create") && !appointment.visit && appointment.status !== "CANCELLED" ? (
             <Link
               href={`/visits/new?appointmentId=${appointment.id}`}
-              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
             >
               Start visit
             </Link>
@@ -63,34 +63,34 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
         </div>
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-5 space-y-4">
+      <div className="rounded-lg border border-line bg-surface p-5 space-y-4">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Status</p>
-          <p className="mt-1 text-sm text-slate-900">{STATUS_LABELS[appointment.status]}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">Status</p>
+          <p className="mt-1 text-sm text-ink">{STATUS_LABELS[appointment.status]}</p>
         </div>
         {appointment.reason ? (
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Reason</p>
-            <p className="mt-1 text-sm text-slate-900">{appointment.reason}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">Reason</p>
+            <p className="mt-1 text-sm text-ink">{appointment.reason}</p>
           </div>
         ) : null}
         {appointment.notes ? (
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Notes</p>
-            <p className="mt-1 whitespace-pre-wrap text-sm text-slate-900">{appointment.notes}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">Notes</p>
+            <p className="mt-1 whitespace-pre-wrap text-sm text-ink">{appointment.notes}</p>
           </div>
         ) : null}
         {appointment.visit ? (
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Visit</p>
-            <Link href={`/visits/${appointment.visit.id}`} className="mt-1 block text-sm text-slate-900 underline">
+            <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">Visit</p>
+            <Link href={`/visits/${appointment.visit.id}`} className="mt-1 block text-sm underline text-primary hover:text-primary-hover">
               View visit record
             </Link>
           </div>
         ) : null}
         {hasPermission(user, "appointment.update") ? (
           <div>
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">Update status</p>
+            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-ink-muted">Update status</p>
             <StatusButtons appointmentId={appointment.id} status={appointment.status} />
           </div>
         ) : null}

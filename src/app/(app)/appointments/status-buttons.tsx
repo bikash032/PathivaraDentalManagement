@@ -25,7 +25,7 @@ export function StatusButtons({ appointmentId, status }: { appointmentId: string
         <form key={a.status} action={updateAppointmentStatusAction.bind(null, appointmentId, a.status)}>
           <button
             type="submit"
-            className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            className="rounded-md border border-field-line bg-surface px-2 py-1 text-xs font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
           >
             {a.label}
           </button>

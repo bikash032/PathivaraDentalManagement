@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { uniquePhone } from "./fixtures";
 import { pickBSDate } from "./bs-helpers";
 
 const SUPER_ADMIN_EMAIL = process.env.SEED_SUPER_ADMIN_EMAIL!;
@@ -30,7 +31,7 @@ test.describe("appointment management", () => {
     // create a patient
     await page.goto("/patients/new");
     await page.getByLabel("Full name").fill(patientName);
-    await page.getByLabel("Phone", { exact: true }).fill("9801234567");
+    await page.getByLabel("Phone", { exact: true }).fill(uniquePhone());
     await page.getByRole("button", { name: "Register patient" }).click();
     await expect(page.getByRole("heading", { name: patientName })).toBeVisible();
 

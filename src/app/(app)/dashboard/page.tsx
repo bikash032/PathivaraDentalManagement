@@ -85,13 +85,13 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-500">{formatBSDateTime(new Date(), timezone)}</p>
+        <h1 className="text-xl font-semibold text-ink">Dashboard</h1>
+        <p className="mt-1 text-sm text-ink-muted">{formatBSDateTime(new Date(), timezone)}</p>
       </div>
 
       {canViewAppointments ? (
         <section>
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">Today</h2>
+          <h2 className="mb-3 text-sm font-semibold text-ink-secondary">Today</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             <StatCard label="Appointments" value={String(todayAppointmentsCount)} />
             <StatCard label="Patients seen/booked" value={String(todayDistinctPatients.length)} />
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
 
       {canViewBilling ? (
         <section>
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">Billing</h2>
+          <h2 className="mb-3 text-sm font-semibold text-ink-secondary">Billing</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <StatCard label="Today's collection" value={formatNPR(todaysCollection._sum.amount)} />
             <StatCard label="Outstanding balance" value={formatNPR(outstandingAmount)} />
@@ -113,12 +113,12 @@ export default async function DashboardPage() {
       ) : null}
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-slate-700">Quick actions</h2>
+        <h2 className="mb-3 text-sm font-semibold text-ink-secondary">Quick actions</h2>
         <div className="flex flex-wrap gap-3">
           {hasPermission(user, "patient.create") ? (
             <Link
               href="/patients/new"
-              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
             >
               New patient
             </Link>
@@ -126,7 +126,7 @@ export default async function DashboardPage() {
           {hasPermission(user, "appointment.create") ? (
             <Link
               href="/appointments/new"
-              className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-md border border-field-line bg-surface px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
             >
               New appointment
             </Link>
@@ -134,7 +134,7 @@ export default async function DashboardPage() {
           {hasPermission(user, "invoice.create") ? (
             <Link
               href="/billing/new"
-              className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-md border border-field-line bg-surface px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
             >
               New invoice
             </Link>
@@ -144,18 +144,18 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {canViewPatients ? (
-          <section className="rounded-lg border border-slate-200 bg-white p-5">
-            <h2 className="mb-3 text-sm font-semibold text-slate-700">Recent patients</h2>
+          <section className="rounded-lg border border-line bg-surface p-5">
+            <h2 className="mb-3 text-sm font-semibold text-ink-secondary">Recent patients</h2>
             {recentPatients.length === 0 ? (
-              <p className="text-sm text-slate-400">No patients registered yet.</p>
+              <p className="text-sm text-ink-muted">No patients registered yet.</p>
             ) : (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-line-soft">
                 {recentPatients.map((p) => (
                   <li key={p.id} className="flex items-center justify-between py-2 text-sm">
-                    <Link href={`/patients/${p.id}`} className="font-medium text-slate-900 hover:underline">
+                    <Link href={`/patients/${p.id}`} className="font-medium text-ink hover:underline hover:text-primary">
                       {p.fullName}
                     </Link>
-                    <span className="text-slate-400">{p.patientCode}</span>
+                    <span className="text-ink-muted">{p.patientCode}</span>
                   </li>
                 ))}
               </ul>
@@ -164,17 +164,17 @@ export default async function DashboardPage() {
         ) : null}
 
         {canViewAudit ? (
-          <section className="rounded-lg border border-slate-200 bg-white p-5">
-            <h2 className="mb-3 text-sm font-semibold text-slate-700">Recent activity</h2>
+          <section className="rounded-lg border border-line bg-surface p-5">
+            <h2 className="mb-3 text-sm font-semibold text-ink-secondary">Recent activity</h2>
             {recentActivity.length === 0 ? (
-              <p className="text-sm text-slate-400">No activity yet.</p>
+              <p className="text-sm text-ink-muted">No activity yet.</p>
             ) : (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-line-soft">
                 {recentActivity.map((entry) => (
                   <li key={entry.id} className="py-2 text-sm">
-                    <span className="text-slate-900">{entry.user?.name ?? "System"}</span>{" "}
-                    <span className="text-slate-500">{entry.action}</span>
-                    <div className="text-xs text-slate-400">{formatBSDateTime(entry.createdAt, timezone)}</div>
+                    <span className="text-ink">{entry.user?.name ?? "System"}</span>{" "}
+                    <span className="text-ink-muted">{entry.action}</span>
+                    <div className="text-xs text-ink-muted">{formatBSDateTime(entry.createdAt, timezone)}</div>
                   </li>
                 ))}
               </ul>

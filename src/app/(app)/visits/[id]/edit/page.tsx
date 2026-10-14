@@ -36,10 +36,10 @@ export default async function EditVisitPage({ params }: { params: Promise<{ id: 
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">Edit visit</h1>
-        <p className="mt-1 text-sm text-slate-500">{visit.patient.fullName}</p>
+        <h1 className="text-xl font-semibold text-ink">Edit visit</h1>
+        <p className="mt-1 text-sm text-ink-muted">{visit.patient.fullName}</p>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div className="rounded-lg border border-line bg-surface p-6">
         <VisitForm
           action={boundAction}
           doctors={doctors}

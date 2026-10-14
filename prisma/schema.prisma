@@ -109,7 +109,7 @@ model Patient {
   id                    String        @id @default(cuid())
   patientCode           String        @unique
   fullName              String
-  phone                 String
+  phone                 String        @unique
   alternatePhone        String?
   address               String?
   dateOfBirth           DateTime?     @db.Date
@@ -131,7 +131,6 @@ model Patient {
   prescriptions Prescription[]
   invoices      Invoice[]
 
-  @@index([phone])
   @@index([fullName])
 }
 

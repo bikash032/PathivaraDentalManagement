@@ -31,9 +31,9 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
     <div className="max-w-3xl space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">{invoice.invoiceNumber}</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            <Link href={`/patients/${invoice.patient.id}`} className="underline">
+          <h1 className="text-xl font-semibold text-ink">{invoice.invoiceNumber}</h1>
+          <p className="mt-1 text-sm text-ink-muted">
+            <Link href={`/patients/${invoice.patient.id}`} className="underline text-primary hover:text-primary-hover">
               {invoice.patient.fullName}
             </Link>{" "}
             · {formatBSDate(invoice.createdAt)}
@@ -43,19 +43,19 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
           <Link
             href={`/print/invoices/${invoice.id}`}
             target="_blank"
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            className="rounded-md border border-field-line bg-surface px-3 py-1.5 text-xs font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
           >
             Print receipt
           </Link>
           <span
             className={`rounded-full px-2 py-1 text-xs font-medium ${
               invoice.status === "PAID"
-                ? "bg-green-100 text-green-700"
+                ? "bg-success-soft text-success-ink"
                 : invoice.status === "CANCELLED"
-                  ? "bg-slate-100 text-slate-500"
+                  ? "bg-line-soft text-ink-muted"
                   : invoice.status === "PARTIALLY_PAID"
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-red-100 text-red-700"
+                    ? "bg-warning-soft text-warning-ink"
+                    : "bg-danger-soft text-danger-ink"
             }`}
           >
             {invoice.status.replace("_", " ")}
@@ -64,7 +64,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             <form action={cancelInvoiceAction.bind(null, invoice.id)}>
               <button
                 type="submit"
-                className="rounded-md border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                className="rounded-md border border-danger-line bg-surface px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger-soft"
               >
                 Cancel invoice
               </button>
@@ -73,83 +73,83 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-        <table className="min-w-full divide-y divide-slate-100 text-sm">
-          <thead className="bg-slate-50">
+      <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+        <table className="min-w-full divide-y divide-line-soft text-sm">
+          <thead className="bg-page">
             <tr>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Item</th>
-              <th className="px-4 py-2 text-right font-medium text-slate-500">Qty</th>
-              <th className="px-4 py-2 text-right font-medium text-slate-500">Unit price</th>
-              <th className="px-4 py-2 text-right font-medium text-slate-500">Discount</th>
-              <th className="px-4 py-2 text-right font-medium text-slate-500">Total</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Item</th>
+              <th className="px-4 py-2 text-right font-medium text-ink-muted">Qty</th>
+              <th className="px-4 py-2 text-right font-medium text-ink-muted">Unit price</th>
+              <th className="px-4 py-2 text-right font-medium text-ink-muted">Discount</th>
+              <th className="px-4 py-2 text-right font-medium text-ink-muted">Total</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-line-soft">
             {invoice.items.map((item) => (
               <tr key={item.id}>
-                <td className="px-4 py-2 text-slate-900">{item.description}</td>
-                <td className="px-4 py-2 text-right text-slate-600">{item.quantity}</td>
-                <td className="px-4 py-2 text-right text-slate-600">{formatNPR(item.unitPrice)}</td>
-                <td className="px-4 py-2 text-right text-slate-600">{formatNPR(item.discount)}</td>
-                <td className="px-4 py-2 text-right text-slate-900">{formatNPR(item.lineTotal)}</td>
+                <td className="px-4 py-2 text-ink">{item.description}</td>
+                <td className="px-4 py-2 text-right text-ink-secondary">{item.quantity}</td>
+                <td className="px-4 py-2 text-right text-ink-secondary">{formatNPR(item.unitPrice)}</td>
+                <td className="px-4 py-2 text-right text-ink-secondary">{formatNPR(item.discount)}</td>
+                <td className="px-4 py-2 text-right text-ink">{formatNPR(item.lineTotal)}</td>
               </tr>
             ))}
           </tbody>
-          <tfoot className="border-t border-slate-200 text-sm">
+          <tfoot className="border-t border-line text-sm">
             <tr>
-              <td colSpan={4} className="px-4 py-2 text-right text-slate-500">
+              <td colSpan={4} className="px-4 py-2 text-right text-ink-muted">
                 Subtotal
               </td>
-              <td className="px-4 py-2 text-right text-slate-900">{formatNPR(invoice.subtotal)}</td>
+              <td className="px-4 py-2 text-right text-ink">{formatNPR(invoice.subtotal)}</td>
             </tr>
             <tr>
-              <td colSpan={4} className="px-4 py-2 text-right text-slate-500">
+              <td colSpan={4} className="px-4 py-2 text-right text-ink-muted">
                 Discount
               </td>
-              <td className="px-4 py-2 text-right text-slate-900">{formatNPR(invoice.discountAmount)}</td>
+              <td className="px-4 py-2 text-right text-ink">{formatNPR(invoice.discountAmount)}</td>
             </tr>
             <tr>
-              <td colSpan={4} className="px-4 py-2 text-right font-medium text-slate-700">
+              <td colSpan={4} className="px-4 py-2 text-right font-medium text-ink-secondary">
                 Total
               </td>
-              <td className="px-4 py-2 text-right font-semibold text-slate-900">{formatNPR(invoice.totalAmount)}</td>
+              <td className="px-4 py-2 text-right font-semibold text-ink">{formatNPR(invoice.totalAmount)}</td>
             </tr>
             <tr>
-              <td colSpan={4} className="px-4 py-2 text-right text-slate-500">
+              <td colSpan={4} className="px-4 py-2 text-right text-ink-muted">
                 Paid
               </td>
-              <td className="px-4 py-2 text-right text-slate-900">{formatNPR(invoice.paidAmount)}</td>
+              <td className="px-4 py-2 text-right text-ink">{formatNPR(invoice.paidAmount)}</td>
             </tr>
             <tr>
-              <td colSpan={4} className="px-4 py-2 text-right font-medium text-slate-700">
+              <td colSpan={4} className="px-4 py-2 text-right font-medium text-ink-secondary">
                 Remaining
               </td>
-              <td className="px-4 py-2 text-right font-semibold text-slate-900">{formatNPR(remaining)}</td>
+              <td className="px-4 py-2 text-right font-semibold text-ink">{formatNPR(remaining)}</td>
             </tr>
           </tfoot>
         </table>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-lg border border-slate-200 bg-white p-5">
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">Payments</h2>
+        <section className="rounded-lg border border-line bg-surface p-5">
+          <h2 className="mb-3 text-sm font-semibold text-ink-secondary">Payments</h2>
           {invoice.payments.length === 0 ? (
-            <p className="text-sm text-slate-400">No payments recorded yet.</p>
+            <p className="text-sm text-ink-muted">No payments recorded yet.</p>
           ) : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-line-soft">
               {invoice.payments.map((p) => (
                 <li key={p.id} className="flex items-center justify-between py-2 text-sm">
                   <div>
-                    <span className={p.voidedAt ? "text-slate-400 line-through" : "text-slate-900"}>
+                    <span className={p.voidedAt ? "text-ink-muted line-through" : "text-ink"}>
                       {formatNPR(p.amount)}
                     </span>{" "}
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-ink-muted">
                       {p.paymentMethod.name} · {formatBSDate(p.paymentDate)}
                     </span>
                   </div>
                   {!p.voidedAt && hasPermission(user, "payment.void") ? (
                     <form action={voidPaymentAction.bind(null, invoice.id, p.id)}>
-                      <button type="submit" className="text-xs text-red-600 hover:underline">
+                      <button type="submit" className="text-xs text-danger hover:underline">
                         Void
                       </button>
                     </form>
@@ -161,8 +161,8 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
         </section>
 
         {canRecordPayment ? (
-          <section className="rounded-lg border border-slate-200 bg-white p-5">
-            <h2 className="mb-3 text-sm font-semibold text-slate-700">Record payment</h2>
+          <section className="rounded-lg border border-line bg-surface p-5">
+            <h2 className="mb-3 text-sm font-semibold text-ink-secondary">Record payment</h2>
             <RecordPaymentForm
               action={boundRecordPayment}
               paymentMethods={paymentMethods}

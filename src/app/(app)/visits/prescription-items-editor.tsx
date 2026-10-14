@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { PrescriptionItemInput } from "@/lib/validation/visit";
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500";
+  "w-full rounded-md border border-field-line px-2 py-1.5 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus";
 
 let nextRowId = 0;
 
@@ -16,7 +16,7 @@ export function PrescriptionItemsEditor({ initialItems = [] }: { initialItems?: 
   return (
     <div className="space-y-3">
       {rows.map((row, index) => (
-        <div key={row.id} className="grid grid-cols-1 gap-2 rounded-md border border-slate-200 p-3 sm:grid-cols-5">
+        <div key={row.id} className="grid grid-cols-1 gap-2 rounded-md border border-line p-3 sm:grid-cols-5">
           <input
             name="medicineName[]"
             placeholder="Medicine"
@@ -37,7 +37,7 @@ export function PrescriptionItemsEditor({ initialItems = [] }: { initialItems?: 
             <button
               type="button"
               onClick={() => setRows((r) => r.filter((_, i) => i !== index))}
-              className="shrink-0 rounded-md border border-slate-300 px-2 text-xs text-slate-500 hover:bg-slate-50"
+              className="shrink-0 rounded-md border border-field-line px-2 text-xs text-ink-muted hover:bg-page"
             >
               Remove
             </button>
@@ -53,7 +53,7 @@ export function PrescriptionItemsEditor({ initialItems = [] }: { initialItems?: 
       <button
         type="button"
         onClick={() => setRows((r) => [...r, { id: nextRowId++ }])}
-        className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+        className="rounded-md border border-field-line bg-surface px-3 py-1.5 text-xs font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
       >
         + Add medicine
       </button>

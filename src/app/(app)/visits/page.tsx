@@ -25,44 +25,44 @@ export default async function VisitsPage({ searchParams }: { searchParams: Promi
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-900">Visits</h1>
+        <h1 className="text-xl font-semibold text-ink">Visits</h1>
         <Link
           href="/visits/new"
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
         >
           New visit
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50">
+      <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+        <table className="min-w-full divide-y divide-line text-sm">
+          <thead className="bg-page">
             <tr>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Date</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Patient</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Doctor</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Chief complaint</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Date</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Patient</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Doctor</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Chief complaint</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-line-soft">
             {visits.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={4} className="px-4 py-6 text-center text-ink-muted">
                   No visit records yet.
                 </td>
               </tr>
             ) : (
               visits.map((v) => (
-                <tr key={v.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-2 text-slate-500">{formatBSDate(v.visitDate)}</td>
+                <tr key={v.id} className="hover:bg-page">
+                  <td className="px-4 py-2 text-ink-muted">{formatBSDate(v.visitDate)}</td>
                   <td className="px-4 py-2">
-                    <Link href={`/visits/${v.id}`} className="font-medium text-slate-900 hover:underline">
+                    <Link href={`/visits/${v.id}`} className="font-medium text-ink hover:underline hover:text-primary">
                       {v.patient.fullName}
                     </Link>
-                    <div className="text-xs text-slate-400">{v.patient.patientCode}</div>
+                    <div className="text-xs text-ink-muted">{v.patient.patientCode}</div>
                   </td>
-                  <td className="px-4 py-2 text-slate-600">{v.doctor.name}</td>
-                  <td className="px-4 py-2 text-slate-600">{v.chiefComplaint}</td>
+                  <td className="px-4 py-2 text-ink-secondary">{v.doctor.name}</td>
+                  <td className="px-4 py-2 text-ink-secondary">{v.chiefComplaint}</td>
                 </tr>
               ))
             )}
@@ -71,18 +71,18 @@ export default async function VisitsPage({ searchParams }: { searchParams: Promi
       </div>
 
       {totalPages > 1 ? (
-        <div className="flex items-center justify-between text-sm text-slate-500">
+        <div className="flex items-center justify-between text-sm text-ink-muted">
           <span>
             Page {page} of {totalPages} ({total} visits)
           </span>
           <div className="flex gap-2">
             {page > 1 ? (
-              <Link href={`/visits?page=${page - 1}`} className="text-slate-900 underline">
+              <Link href={`/visits?page=${page - 1}`} className="underline text-primary hover:text-primary-hover">
                 Previous
               </Link>
             ) : null}
             {page < totalPages ? (
-              <Link href={`/visits?page=${page + 1}`} className="text-slate-900 underline">
+              <Link href={`/visits?page=${page + 1}`} className="underline text-primary hover:text-primary-hover">
                 Next
               </Link>
             ) : null}

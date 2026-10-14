@@ -8,7 +8,7 @@ import type { PaymentFormState } from "./actions";
 type PaymentMethod = { id: string; name: string };
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500";
+  "w-full rounded-md border border-field-line px-3 py-2 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -16,7 +16,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+      className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "Recording…" : "Record payment"}
     </button>
@@ -38,21 +38,21 @@ export function RecordPaymentForm({
   return (
     <form action={formAction} className="space-y-3">
       {state.error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger-ink">
           {state.error}
         </div>
       ) : null}
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <label htmlFor="amount" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="amount" className="block text-sm font-medium text-ink-secondary">
             Amount (NPR)
           </label>
           <input id="amount" name="amount" type="number" min={0.01} step="0.01" required className={inputClass} />
-          {errors.amount ? <p className="text-xs text-red-600">{errors.amount}</p> : null}
+          {errors.amount ? <p className="text-xs text-danger">{errors.amount}</p> : null}
         </div>
         <div className="space-y-1">
-          <label htmlFor="paymentDate" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="paymentDate" className="block text-sm font-medium text-ink-secondary">
             Date (वि.सं.)
           </label>
           <BSDatePicker id="paymentDate" name="paymentDate" defaultValue={todayValue} required />
@@ -60,7 +60,7 @@ export function RecordPaymentForm({
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="paymentMethodId" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="paymentMethodId" className="block text-sm font-medium text-ink-secondary">
           Method
         </label>
         <select id="paymentMethodId" name="paymentMethodId" required defaultValue="" className={inputClass}>
@@ -73,11 +73,11 @@ export function RecordPaymentForm({
             </option>
           ))}
         </select>
-        {errors.paymentMethodId ? <p className="text-xs text-red-600">{errors.paymentMethodId}</p> : null}
+        {errors.paymentMethodId ? <p className="text-xs text-danger">{errors.paymentMethodId}</p> : null}
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="reference" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="reference" className="block text-sm font-medium text-ink-secondary">
           Reference (optional)
         </label>
         <input id="reference" name="reference" className={inputClass} />

@@ -25,37 +25,37 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
   const remaining = Number(invoice.totalAmount) - Number(invoice.paidAmount);
 
   return (
-    <div className="mx-auto max-w-2xl bg-white p-8 text-slate-900 print:p-0">
+    <div className="mx-auto max-w-2xl bg-surface p-8 text-ink print:p-0">
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-lg font-bold">{clinic?.clinicName ?? "Pathivara Dental Clinic"}</h1>
-          {clinic?.address ? <p className="text-sm text-slate-600">{clinic.address}</p> : null}
-          <p className="text-sm text-slate-600">
+          {clinic?.address ? <p className="text-sm text-ink-secondary">{clinic.address}</p> : null}
+          <p className="text-sm text-ink-secondary">
             {[clinic?.phone, clinic?.email].filter(Boolean).join(" · ")}
           </p>
-          {clinic?.panNumber ? <p className="text-sm text-slate-600">PAN: {clinic.panNumber}</p> : null}
+          {clinic?.panNumber ? <p className="text-sm text-ink-secondary">PAN: {clinic.panNumber}</p> : null}
         </div>
         <PrintButton />
       </div>
 
-      <div className="mb-6 flex items-start justify-between border-y border-slate-200 py-3">
+      <div className="mb-6 flex items-start justify-between border-y border-line py-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-slate-500">Billed to</p>
+          <p className="text-xs uppercase tracking-wide text-ink-muted">Billed to</p>
           <p className="font-medium">{invoice.patient.fullName}</p>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-ink-secondary">
             {invoice.patient.patientCode} · {invoice.patient.phone}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Receipt / Invoice</p>
+          <p className="text-xs uppercase tracking-wide text-ink-muted">Receipt / Invoice</p>
           <p className="font-medium">{invoice.invoiceNumber}</p>
-          <p className="text-sm text-slate-600">{formatBSDate(invoice.createdAt)}</p>
+          <p className="text-sm text-ink-secondary">{formatBSDate(invoice.createdAt)}</p>
         </div>
       </div>
 
       <table className="mb-4 w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-300 text-left text-xs uppercase tracking-wide text-slate-500">
+          <tr className="border-b border-field-line text-left text-xs uppercase tracking-wide text-ink-muted">
             <th className="py-1">Item</th>
             <th className="py-1 text-right">Qty</th>
             <th className="py-1 text-right">Price</th>
@@ -65,7 +65,7 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
         </thead>
         <tbody>
           {invoice.items.map((item) => (
-            <tr key={item.id} className="border-b border-slate-100">
+            <tr key={item.id} className="border-b border-line-soft">
               <td className="py-1.5">{item.description}</td>
               <td className="py-1.5 text-right">{item.quantity}</td>
               <td className="py-1.5 text-right">{formatNPR(item.unitPrice)}</td>
@@ -78,19 +78,19 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
 
       <div className="ml-auto max-w-xs space-y-1 text-sm">
         <div className="flex justify-between">
-          <span className="text-slate-500">Subtotal</span>
+          <span className="text-ink-muted">Subtotal</span>
           <span>{formatNPR(invoice.subtotal)}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-slate-500">Discount</span>
+          <span className="text-ink-muted">Discount</span>
           <span>{formatNPR(invoice.discountAmount)}</span>
         </div>
-        <div className="flex justify-between border-t border-slate-300 pt-1 font-semibold">
+        <div className="flex justify-between border-t border-field-line pt-1 font-semibold">
           <span>Total</span>
           <span>{formatNPR(invoice.totalAmount)}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-slate-500">Paid</span>
+          <span className="text-ink-muted">Paid</span>
           <span>{formatNPR(invoice.paidAmount)}</span>
         </div>
         <div className="flex justify-between font-semibold">
@@ -101,11 +101,11 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
 
       {invoice.payments.length > 0 ? (
         <div className="mt-6">
-          <p className="mb-1 text-xs uppercase tracking-wide text-slate-500">Payments received</p>
+          <p className="mb-1 text-xs uppercase tracking-wide text-ink-muted">Payments received</p>
           <table className="w-full text-sm">
             <tbody>
               {invoice.payments.map((p) => (
-                <tr key={p.id} className="border-b border-slate-100">
+                <tr key={p.id} className="border-b border-line-soft">
                   <td className="py-1">{formatBSDate(p.paymentDate)}</td>
                   <td className="py-1">{p.paymentMethod.name}</td>
                   <td className="py-1 text-right">{formatNPR(p.amount)}</td>
@@ -117,7 +117,7 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
       ) : null}
 
       {clinic?.receiptFooterNote ? (
-        <p className="mt-8 whitespace-pre-wrap border-t border-slate-200 pt-3 text-xs text-slate-500">
+        <p className="mt-8 whitespace-pre-wrap border-t border-line pt-3 text-xs text-ink-muted">
           {clinic.receiptFooterNote}
         </p>
       ) : null}

@@ -18,8 +18,8 @@ export default async function NewInvoicePage({
 
   return (
     <div className="max-w-3xl space-y-6">
-      <h1 className="text-xl font-semibold text-slate-900">New invoice</h1>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <h1 className="text-xl font-semibold text-ink">New invoice</h1>
+      <div className="rounded-lg border border-line bg-surface p-6">
         <InvoiceForm
           action={createInvoiceAction}
           treatments={treatments.map((t) => ({

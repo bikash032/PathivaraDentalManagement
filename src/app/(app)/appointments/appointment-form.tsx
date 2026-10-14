@@ -15,7 +15,7 @@ function SubmitButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+      className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "Saving…" : label}
     </button>
@@ -23,7 +23,7 @@ function SubmitButton({ label }: { label: string }) {
 }
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500";
+  "w-full rounded-md border border-field-line px-3 py-2 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus";
 
 export function AppointmentForm({
   action,
@@ -51,24 +51,24 @@ export function AppointmentForm({
   return (
     <form action={formAction} className="space-y-5">
       {state.error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger-ink">
           {state.error}
         </div>
       ) : null}
 
       <div className="space-y-1">
-        <label className="block text-sm font-medium text-slate-700">Patient</label>
+        <label className="block text-sm font-medium text-ink-secondary">Patient</label>
         <PatientPicker
           name="patientId"
           initialPatientId={initialValues?.patientId}
           initialLabel={initialValues?.patientLabel}
         />
-        {errors.patientId ? <p className="text-xs text-red-600">{errors.patientId}</p> : null}
+        {errors.patientId ? <p className="text-xs text-danger">{errors.patientId}</p> : null}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1">
-          <label htmlFor="doctorId" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="doctorId" className="block text-sm font-medium text-ink-secondary">
             Doctor
           </label>
           <select
@@ -87,11 +87,11 @@ export function AppointmentForm({
               </option>
             ))}
           </select>
-          {errors.doctorId ? <p className="text-xs text-red-600">{errors.doctorId}</p> : null}
+          {errors.doctorId ? <p className="text-xs text-danger">{errors.doctorId}</p> : null}
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="durationMinutes" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="durationMinutes" className="block text-sm font-medium text-ink-secondary">
             Duration
           </label>
           <select
@@ -109,15 +109,15 @@ export function AppointmentForm({
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="date" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="date" className="block text-sm font-medium text-ink-secondary">
             Date (वि.सं.)
           </label>
           <BSDatePicker id="date" name="date" defaultValue={initialValues?.date} required />
-          {errors.date ? <p className="text-xs text-red-600">{errors.date}</p> : null}
+          {errors.date ? <p className="text-xs text-danger">{errors.date}</p> : null}
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="time" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="time" className="block text-sm font-medium text-ink-secondary">
             Time
           </label>
           <input
@@ -128,19 +128,19 @@ export function AppointmentForm({
             required
             className={inputClass}
           />
-          {errors.time ? <p className="text-xs text-red-600">{errors.time}</p> : null}
+          {errors.time ? <p className="text-xs text-danger">{errors.time}</p> : null}
         </div>
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="reason" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="reason" className="block text-sm font-medium text-ink-secondary">
           Reason / complaint
         </label>
         <input id="reason" name="reason" defaultValue={initialValues?.reason} className={inputClass} />
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="notes" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="notes" className="block text-sm font-medium text-ink-secondary">
           Notes
         </label>
         <textarea id="notes" name="notes" defaultValue={initialValues?.notes} rows={3} className={inputClass} />

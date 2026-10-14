@@ -3,18 +3,37 @@ import { z } from "zod";
 // Nepali mobile numbers: 10 digits starting with 96, 97, or 98.
 export const nepaliPhoneRegex = /^9[678]\d{8}$/;
 
+const PHONE_MESSAGE =
+  "Enter a valid 10-digit Nepali mobile number (starting with 96, 97, or 98).";
+
+/**
+ * Reduces the ways a Nepali mobile number can be typed to the single bare
+ * 10-digit form the database already stores, so that +977-9852828286,
+ * 09852828286 and 9852828286 are one number rather than three.
+ *
+ * Both prefix strips are length-guarded on purpose: 9779852828 is itself a
+ * valid local number, so "977" is only a country code when a full 10 digits
+ * follow it.
+ */
+export function normalizeNepaliPhone(input: string): string {
+  let value = input.replace(/[\s\-().]/g, "").replace(/^\+/, "");
+  if (value.length === 13 && value.startsWith("977")) value = value.slice(3);
+  if (value.length === 11 && value.startsWith("0")) value = value.slice(1);
+  return value;
+}
+
 export const nepaliPhoneSchema = z
   .string()
   .trim()
-  .regex(nepaliPhoneRegex, "Enter a valid 10-digit Nepali mobile number (starting with 96, 97, or 98).");
+  .transform(normalizeNepaliPhone)
+  .refine((v) => nepaliPhoneRegex.test(v), { message: PHONE_MESSAGE });
 
 const optionalPhone = z
   .string()
   .trim()
   .optional()
-  .refine((v) => !v || nepaliPhoneRegex.test(v), {
-    message: "Enter a valid 10-digit Nepali mobile number (starting with 96, 97, or 98).",
-  });
+  .transform((v) => (v ? normalizeNepaliPhone(v) : v))
+  .refine((v) => !v || nepaliPhoneRegex.test(v), { message: PHONE_MESSAGE });
 
 export const patientSchema = z.object({
   fullName: z.string().trim().min(2, "Full name is required."),
@@ -48,4 +67,9 @@ export function parsePatientFormData(formData: FormData) {
     allergies: formData.get("allergies") || undefined,
     notes: formData.get("notes") || undefined,
   });
+}
+
+/** Single wording for a phone collision, shared by the form, the API and the server action. */
+export function phoneTakenMessage(fullName: string): string {
+  return `Phone number is already used by ${fullName}.`;
 }

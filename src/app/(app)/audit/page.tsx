@@ -39,8 +39,8 @@ export default async function AuditLogPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">Audit log</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-xl font-semibold text-ink">Audit log</h1>
+        <p className="mt-1 text-sm text-ink-muted">
           A record of security- and record-sensitive actions. Entries cannot be edited or deleted.
         </p>
       </div>
@@ -51,12 +51,12 @@ export default async function AuditLogPage({
           name="action"
           defaultValue={params.action ?? ""}
           placeholder="Filter by action (e.g. payment)"
-          className="w-full max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="w-full max-w-xs rounded-md border border-field-line px-3 py-2 text-sm"
         />
         <select
           name="entityType"
           defaultValue={params.entityType ?? ""}
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="rounded-md border border-field-line px-3 py-2 text-sm"
         >
           <option value="">All record types</option>
           {entityTypes.map((e) => (
@@ -67,41 +67,41 @@ export default async function AuditLogPage({
         </select>
         <button
           type="submit"
-          className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="rounded-md border border-field-line bg-surface px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
         >
           Filter
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50">
+      <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+        <table className="min-w-full divide-y divide-line text-sm">
+          <thead className="bg-page">
             <tr>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">When</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">User</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Action</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Record</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">IP</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">When</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">User</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Action</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Record</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">IP</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-line-soft">
             {entries.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-6 text-center text-ink-muted">
                   No audit entries found.
                 </td>
               </tr>
             ) : (
               entries.map((entry) => (
-                <tr key={entry.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-2 text-slate-500">{formatBSDateTime(entry.createdAt, timezone)}</td>
-                  <td className="px-4 py-2 text-slate-900">{entry.user?.name ?? "System"}</td>
-                  <td className="px-4 py-2 font-mono text-xs text-slate-700">{entry.action}</td>
-                  <td className="px-4 py-2 text-slate-600">
+                <tr key={entry.id} className="hover:bg-page">
+                  <td className="px-4 py-2 text-ink-muted">{formatBSDateTime(entry.createdAt, timezone)}</td>
+                  <td className="px-4 py-2 text-ink">{entry.user?.name ?? "System"}</td>
+                  <td className="px-4 py-2 font-mono text-xs text-ink-secondary">{entry.action}</td>
+                  <td className="px-4 py-2 text-ink-secondary">
                     {entry.entityType}
-                    {entry.entityId ? <span className="ml-1 text-xs text-slate-400">{entry.entityId}</span> : null}
+                    {entry.entityId ? <span className="ml-1 text-xs text-ink-muted">{entry.entityId}</span> : null}
                   </td>
-                  <td className="px-4 py-2 text-xs text-slate-400">{entry.ipAddress ?? "—"}</td>
+                  <td className="px-4 py-2 text-xs text-ink-muted">{entry.ipAddress ?? "—"}</td>
                 </tr>
               ))
             )}
@@ -110,18 +110,18 @@ export default async function AuditLogPage({
       </div>
 
       {totalPages > 1 ? (
-        <div className="flex items-center justify-between text-sm text-slate-500">
+        <div className="flex items-center justify-between text-sm text-ink-muted">
           <span>
             Page {page} of {totalPages} ({total} entries)
           </span>
           <div className="flex gap-2">
             {page > 1 ? (
-              <Link href={`/audit?page=${page - 1}`} className="text-slate-900 underline">
+              <Link href={`/audit?page=${page - 1}`} className="underline text-primary hover:text-primary-hover">
                 Previous
               </Link>
             ) : null}
             {page < totalPages ? (
-              <Link href={`/audit?page=${page + 1}`} className="text-slate-900 underline">
+              <Link href={`/audit?page=${page + 1}`} className="underline text-primary hover:text-primary-hover">
                 Next
               </Link>
             ) : null}

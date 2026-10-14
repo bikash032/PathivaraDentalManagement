@@ -24,9 +24,9 @@ export default async function NewAppointmentPage({
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">New appointment</h1>
+        <h1 className="text-xl font-semibold text-ink">New appointment</h1>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div className="rounded-lg border border-line bg-surface p-6">
         <AppointmentForm
           action={createAppointmentAction}
           doctors={doctors}

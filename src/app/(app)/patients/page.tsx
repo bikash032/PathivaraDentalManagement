@@ -57,10 +57,10 @@ export default async function PatientsPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-900">Patients</h1>
+        <h1 className="text-xl font-semibold text-ink">Patients</h1>
         <Link
           href="/patients/new"
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
         >
           New patient
         </Link>
@@ -72,12 +72,12 @@ export default async function PatientsPage({
           name="q"
           defaultValue={q}
           placeholder="Search by name, phone, or patient ID"
-          className="w-full max-w-sm rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          className="w-full max-w-sm rounded-md border border-field-line px-3 py-2 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus"
         />
         <select
           name="status"
           defaultValue={status}
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          className="rounded-md border border-field-line px-3 py-2 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus"
         >
           <option value="ACTIVE">Active</option>
           <option value="ARCHIVED">Archived</option>
@@ -85,45 +85,45 @@ export default async function PatientsPage({
         </select>
         <button
           type="submit"
-          className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="rounded-md border border-field-line bg-surface px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
         >
           Search
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50">
+      <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+        <table className="min-w-full divide-y divide-line text-sm">
+          <thead className="bg-page">
             <tr>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Patient ID</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Name</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Phone</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Gender</th>
-              <th className="px-4 py-2 text-left font-medium text-slate-500">Status</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Patient ID</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Name</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Phone</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Gender</th>
+              <th className="px-4 py-2 text-left font-medium text-ink-muted">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-line-soft">
             {patients.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-6 text-center text-ink-muted">
                   No patients found.
                 </td>
               </tr>
             ) : (
               patients.map((p) => (
-                <tr key={p.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-2 text-slate-500">{p.patientCode}</td>
+                <tr key={p.id} className="hover:bg-page">
+                  <td className="px-4 py-2 text-ink-muted">{p.patientCode}</td>
                   <td className="px-4 py-2">
-                    <Link href={`/patients/${p.id}`} className="font-medium text-slate-900 hover:underline">
+                    <Link href={`/patients/${p.id}`} className="font-medium text-ink hover:underline hover:text-primary">
                       {p.fullName}
                     </Link>
                   </td>
-                  <td className="px-4 py-2 text-slate-600">{p.phone}</td>
-                  <td className="px-4 py-2 text-slate-600">{p.gender}</td>
+                  <td className="px-4 py-2 text-ink-secondary">{p.phone}</td>
+                  <td className="px-4 py-2 text-ink-secondary">{p.gender}</td>
                   <td className="px-4 py-2">
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        p.status === "ACTIVE" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
+                        p.status === "ACTIVE" ? "bg-success-soft text-success-ink" : "bg-line-soft text-ink-muted"
                       }`}
                     >
                       {p.status}
@@ -137,18 +137,18 @@ export default async function PatientsPage({
       </div>
 
       {totalPages > 1 ? (
-        <div className="flex items-center justify-between text-sm text-slate-500">
+        <div className="flex items-center justify-between text-sm text-ink-muted">
           <span>
             Page {page} of {totalPages} ({total} patients)
           </span>
           <div className="flex gap-2">
             {page > 1 ? (
-              <Link href={buildHref({ page: String(page - 1) })} className="text-slate-900 underline">
+              <Link href={buildHref({ page: String(page - 1) })} className="underline text-primary hover:text-primary-hover">
                 Previous
               </Link>
             ) : null}
             {page < totalPages ? (
-              <Link href={buildHref({ page: String(page + 1) })} className="text-slate-900 underline">
+              <Link href={buildHref({ page: String(page + 1) })} className="underline text-primary hover:text-primary-hover">
                 Next
               </Link>
             ) : null}

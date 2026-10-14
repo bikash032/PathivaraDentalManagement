@@ -7,8 +7,8 @@ export default async function NewTreatmentPage() {
 
   return (
     <div className="max-w-md space-y-6">
-      <h1 className="text-xl font-semibold text-slate-900">New treatment</h1>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <h1 className="text-xl font-semibold text-ink">New treatment</h1>
+      <div className="rounded-lg border border-line bg-surface p-6">
         <TreatmentForm action={createTreatmentAction} submitLabel="Create treatment" />
       </div>
     </div>

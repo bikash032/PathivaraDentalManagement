@@ -24,10 +24,10 @@ export default async function EditAppointmentPage({ params }: { params: Promise<
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">Reschedule appointment</h1>
-        <p className="mt-1 text-sm text-slate-500">{appointment.patient.fullName}</p>
+        <h1 className="text-xl font-semibold text-ink">Reschedule appointment</h1>
+        <p className="mt-1 text-sm text-ink-muted">{appointment.patient.fullName}</p>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div className="rounded-lg border border-line bg-surface p-6">
         <AppointmentForm
           action={boundAction}
           doctors={doctors}

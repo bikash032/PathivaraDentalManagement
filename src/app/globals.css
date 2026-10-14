@@ -1,47 +1,117 @@
 @import "tailwindcss";
 
 /*
- * This admin UI is deliberately light-only: every surface is a fixed light
- * value (bg-white cards on bg-slate-50, slate-900 text) and there are no
- * `dark:` variants anywhere in the app.
+ * Pathivara Dental Clinic — colour system.
  *
- * `color-scheme: light` states that intent to the browser, so form controls,
- * native date/time pickers, autofill and scrollbars are rendered light even
- * when the operating system is set to dark mode. Without it, a dark-mode OS
- * left inputs with near-white text on our white input backgrounds.
+ * Every colour in the app comes from these tokens. Tailwind turns each
+ * `--color-<name>` into utilities (`bg-primary`, `text-ink`, `border-line`…),
+ * so pages use names, never raw hex — change a value here and the whole app
+ * follows.
+ *
+ * Status colours come in four parts: the brand value itself (for fills and
+ * icons), a soft background, a border tint, and an `-ink` text shade. The
+ * `-ink` shade exists because the brand values are not all legible as text on
+ * a light tint (warning #F59E0B on white is ~2:1); `-ink` keeps badge and
+ * alert text at WCAG AA.
  */
-:root {
-  color-scheme: light;
-  --background: #ffffff;
-  --foreground: #171717;
-  --input-foreground: #0f172a; /* slate-900 — entered values */
-  --input-placeholder: #9ca3af; /* gray-400 — muted, still legible */
-  --input-disabled-foreground: #4b5563; /* gray-600 — muted but readable */
+@theme {
+  /* Brand */
+  --color-primary: #0f766e;
+  --color-primary-hover: #115e59;
+  --color-primary-soft: #f0fdfa;
+  --color-secondary: #2563eb;
+  --color-accent: #14b8a6;
+
+  /* Surfaces */
+  --color-page: #f8fafc;
+  --color-surface: #ffffff;
+
+  /* Text */
+  --color-ink: #0f172a;
+  --color-ink-secondary: #475569;
+  --color-ink-muted: #64748b;
+
+  /* Lines */
+  --color-line: #e2e8f0;
+  --color-line-soft: #f1f5f9;
+
+  /* Form controls */
+  --color-field: #ffffff;
+  --color-field-ink: #111827;
+  --color-field-line: #cbd5e1;
+  --color-focus: #0f766e;
+
+  /* Status */
+  --color-success: #16a34a;
+  --color-success-soft: #f0fdf4;
+  --color-success-line: #bbf7d0;
+  --color-success-ink: #15803d;
+
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fffbeb;
+  --color-warning-line: #fde68a;
+  --color-warning-ink: #b45309;
+
+  --color-danger: #dc2626;
+  --color-danger-soft: #fef2f2;
+  --color-danger-line: #fecaca;
+  --color-danger-ink: #b91c1c;
+
+  --color-info: #2563eb;
+  --color-info-soft: #eff6ff;
+  --color-info-line: #bfdbfe;
+  --color-info-ink: #1d4ed8;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+ * This admin UI is deliberately light-only — there are no `dark:` variants.
+ * `color-scheme: light` makes native controls (date/time pickers, autofill,
+ * scrollbars) render light even when the OS is in dark mode; without it a
+ * dark-mode OS left input text near-white on white inputs.
+ */
+:root {
+  color-scheme: light;
+  --input-placeholder: #9ca3af; /* muted, distinct from entered values */
+  --input-disabled-foreground: #4b5563; /* muted but readable */
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-page);
+  color: var(--color-ink);
   font-family: Arial, Helvetica, sans-serif;
 }
 
+::selection {
+  background: #ccfbf1;
+  color: var(--color-ink);
+}
+
 /*
- * Tailwind's preflight sets `color: inherit` on form controls, so they follow
- * the body colour. Setting the colour explicitly here means input text can
- * never be dragged to an unreadable value by an ancestor.
+ * Tailwind's preflight sets `color: inherit` on form controls. Pinning the
+ * colour and background here means typed text is always dark on white,
+ * whatever an ancestor does.
  */
 input,
 textarea,
 select {
-  color: var(--input-foreground);
-  caret-color: var(--input-foreground);
+  color: var(--color-field-ink);
+  caret-color: var(--color-field-ink);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+textarea,
+select {
+  background-color: var(--color-field);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-primary);
 }
 
 input::placeholder,
@@ -57,13 +127,14 @@ input[readonly],
 textarea[readonly] {
   color: var(--input-disabled-foreground);
   -webkit-text-fill-color: var(--input-disabled-foreground); /* Safari ignores `color` when disabled */
+  background-color: var(--color-page);
   opacity: 1;
 }
 
 /*
  * Chrome/Safari autofill paints its own background and text colour. The inset
- * shadow trick repaints the background; -webkit-text-fill-color is the only
- * way to control the text colour of an autofilled value.
+ * shadow repaints the background; -webkit-text-fill-color is the only way to
+ * control an autofilled value's text colour.
  */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -71,11 +142,22 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
-  -webkit-text-fill-color: var(--input-foreground);
-  caret-color: var(--input-foreground);
-  box-shadow: 0 0 0 1000px #ffffff inset;
-  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  -webkit-text-fill-color: var(--color-field-ink);
+  caret-color: var(--color-field-ink);
+  box-shadow: 0 0 0 1000px var(--color-field) inset;
+  -webkit-box-shadow: 0 0 0 1000px var(--color-field) inset;
   transition: background-color 9999s ease-in-out 0s; /* stall Chrome's yellow wash */
+}
+
+/*
+ * One keyboard-focus style for every button and link. Form fields already
+ * carry their own teal focus ring via utilities.
+ */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 @media print {

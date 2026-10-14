@@ -20,12 +20,12 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="max-w-md space-y-8">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">{user.name}</h1>
-        <p className="mt-1 text-sm text-slate-500">{user.email}</p>
+        <h1 className="text-xl font-semibold text-ink">{user.name}</h1>
+        <p className="mt-1 text-sm text-ink-muted">{user.email}</p>
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 className="mb-4 text-sm font-semibold text-slate-900">Details</h2>
+      <div className="rounded-lg border border-line bg-surface p-6">
+        <h2 className="mb-4 text-sm font-semibold text-ink">Details</h2>
         <EditUserForm
           action={boundUpdate}
           roles={roles}
@@ -38,8 +38,8 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
         />
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 className="mb-4 text-sm font-semibold text-slate-900">Reset password</h2>
+      <div className="rounded-lg border border-line bg-surface p-6">
+        <h2 className="mb-4 text-sm font-semibold text-ink">Reset password</h2>
         <ResetPasswordForm action={boundReset} />
       </div>
     </div>

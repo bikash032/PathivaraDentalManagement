@@ -15,17 +15,17 @@ export default async function PrintPatientPage({ params }: { params: Promise<{ i
   if (!patient) notFound();
 
   return (
-    <div className="mx-auto max-w-2xl bg-white p-8 text-slate-900 print:p-0">
+    <div className="mx-auto max-w-2xl bg-surface p-8 text-ink print:p-0">
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-lg font-bold">{clinic?.clinicName ?? "Pathivara Dental Clinic"}</h1>
-          {clinic?.address ? <p className="text-sm text-slate-600">{clinic.address}</p> : null}
-          <p className="text-sm text-slate-600">Patient registration record</p>
+          {clinic?.address ? <p className="text-sm text-ink-secondary">{clinic.address}</p> : null}
+          <p className="text-sm text-ink-secondary">Patient registration record</p>
         </div>
         <PrintButton />
       </div>
 
-      <div className="grid grid-cols-2 gap-4 border-y border-slate-200 py-4 text-sm">
+      <div className="grid grid-cols-2 gap-4 border-y border-line py-4 text-sm">
         <Field label="Patient ID" value={patient.patientCode} />
         <Field label="Registered" value={formatBSDate(patient.createdAt)} />
         <Field label="Full name" value={patient.fullName} />
@@ -43,14 +43,14 @@ export default async function PrintPatientPage({ params }: { params: Promise<{ i
 
       {patient.allergies ? (
         <div className="mt-4 text-sm">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Allergies</p>
+          <p className="text-xs uppercase tracking-wide text-ink-muted">Allergies</p>
           <p>{patient.allergies}</p>
         </div>
       ) : null}
 
       {patient.medicalNotes ? (
         <div className="mt-4 text-sm">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Medical notes</p>
+          <p className="text-xs uppercase tracking-wide text-ink-muted">Medical notes</p>
           <p className="whitespace-pre-wrap">{patient.medicalNotes}</p>
         </div>
       ) : null}
@@ -61,7 +61,7 @@ export default async function PrintPatientPage({ params }: { params: Promise<{ i
 function Field({ label, value }: { label: string; value: string | null | undefined }) {
   return (
     <div>
-      <p className="text-xs uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="text-xs uppercase tracking-wide text-ink-muted">{label}</p>
       <p>{value || "—"}</p>
     </div>
   );

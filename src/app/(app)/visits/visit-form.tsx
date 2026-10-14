@@ -11,7 +11,7 @@ import type { PrescriptionItemInput } from "@/lib/validation/visit";
 type Doctor = { id: string; name: string };
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500";
+  "w-full rounded-md border border-field-line px-3 py-2 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus";
 
 function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
@@ -19,7 +19,7 @@ function SubmitButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+      className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "Saving…" : label}
     </button>
@@ -59,7 +59,7 @@ export function VisitForm({
   return (
     <form action={formAction} className="space-y-5">
       {state.error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger-ink">
           {state.error}
         </div>
       ) : null}
@@ -69,10 +69,10 @@ export function VisitForm({
       ) : null}
 
       <div className="space-y-1">
-        <label className="block text-sm font-medium text-slate-700">Patient</label>
+        <label className="block text-sm font-medium text-ink-secondary">Patient</label>
         {lockPatient ? (
           <>
-            <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+            <div className="rounded-md border border-line bg-page px-3 py-2 text-sm text-ink-secondary">
               {initialValues?.patientLabel}
             </div>
             <input type="hidden" name="patientId" value={initialValues?.patientId} />
@@ -84,12 +84,12 @@ export function VisitForm({
             initialLabel={initialValues?.patientLabel}
           />
         )}
-        {errors.patientId ? <p className="text-xs text-red-600">{errors.patientId}</p> : null}
+        {errors.patientId ? <p className="text-xs text-danger">{errors.patientId}</p> : null}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1">
-          <label htmlFor="doctorId" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="doctorId" className="block text-sm font-medium text-ink-secondary">
             Doctor
           </label>
           <select
@@ -108,11 +108,11 @@ export function VisitForm({
               </option>
             ))}
           </select>
-          {errors.doctorId ? <p className="text-xs text-red-600">{errors.doctorId}</p> : null}
+          {errors.doctorId ? <p className="text-xs text-danger">{errors.doctorId}</p> : null}
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="nextAppointmentDate" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="nextAppointmentDate" className="block text-sm font-medium text-ink-secondary">
             Suggested next appointment (वि.सं., optional)
           </label>
           <BSDatePicker
@@ -124,7 +124,7 @@ export function VisitForm({
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="chiefComplaint" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="chiefComplaint" className="block text-sm font-medium text-ink-secondary">
           Chief complaint
         </label>
         <input
@@ -134,12 +134,12 @@ export function VisitForm({
           required
           className={inputClass}
         />
-        {errors.chiefComplaint ? <p className="text-xs text-red-600">{errors.chiefComplaint}</p> : null}
+        {errors.chiefComplaint ? <p className="text-xs text-danger">{errors.chiefComplaint}</p> : null}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1">
-          <label htmlFor="examination" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="examination" className="block text-sm font-medium text-ink-secondary">
             Examination
           </label>
           <textarea
@@ -151,7 +151,7 @@ export function VisitForm({
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="diagnosis" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="diagnosis" className="block text-sm font-medium text-ink-secondary">
             Diagnosis
           </label>
           <textarea
@@ -163,7 +163,7 @@ export function VisitForm({
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="treatmentNotes" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="treatmentNotes" className="block text-sm font-medium text-ink-secondary">
             Treatment given
           </label>
           <textarea
@@ -175,7 +175,7 @@ export function VisitForm({
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="clinicalNotes" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="clinicalNotes" className="block text-sm font-medium text-ink-secondary">
             Clinical notes
           </label>
           <textarea
@@ -189,7 +189,7 @@ export function VisitForm({
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="followUpInstructions" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="followUpInstructions" className="block text-sm font-medium text-ink-secondary">
           Follow-up instructions
         </label>
         <textarea
@@ -202,7 +202,7 @@ export function VisitForm({
       </div>
 
       <div>
-        <p className="mb-2 block text-sm font-medium text-slate-700">Prescription</p>
+        <p className="mb-2 block text-sm font-medium text-ink-secondary">Prescription</p>
         <PrescriptionItemsEditor initialItems={initialPrescriptionItems} />
       </div>
 

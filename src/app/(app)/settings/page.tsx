@@ -21,8 +21,8 @@ export default async function ClinicProfileSettingsPage() {
         }}
       />
 
-      <div className="max-w-xl border-t border-slate-200 pt-6">
-        <h2 className="mb-3 text-sm font-semibold text-slate-900">Date &amp; time</h2>
+      <div className="max-w-xl border-t border-line pt-6">
+        <h2 className="mb-3 text-sm font-semibold text-ink">Date &amp; time</h2>
         <TimezoneForm action={updateTimezoneAction} currentTimezone={timezone} />
       </div>
     </div>

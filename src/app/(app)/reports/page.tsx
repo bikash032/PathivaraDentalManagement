@@ -35,15 +35,15 @@ export default async function ReportsPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold text-slate-900">Reports</h1>
+      <h1 className="text-xl font-semibold text-ink">Reports</h1>
 
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+      <div className="flex flex-wrap gap-2 border-b border-line pb-3">
         {REPORT_TYPES.map((r) => (
           <Link
             key={r.key}
             href={`/reports?type=${r.key}&from=${from}&to=${to}`}
             className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-              r.key === type ? "bg-slate-900 text-white" : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+              r.key === type ? "bg-primary text-white" : "border border-field-line bg-surface text-ink-secondary hover:bg-page"
             }`}
           >
             {r.label}
@@ -54,26 +54,26 @@ export default async function ReportsPage({
       <form className="flex flex-wrap items-end gap-3">
         <input type="hidden" name="type" value={type} />
         <div className="w-44 space-y-1">
-          <label htmlFor="from" className="block text-xs font-medium text-slate-500">
+          <label htmlFor="from" className="block text-xs font-medium text-ink-muted">
             From (वि.सं.)
           </label>
           <BSDatePicker id="from" name="from" defaultValue={from} />
         </div>
         <div className="w-44 space-y-1">
-          <label htmlFor="to" className="block text-xs font-medium text-slate-500">
+          <label htmlFor="to" className="block text-xs font-medium text-ink-muted">
             To (वि.सं.)
           </label>
           <BSDatePicker id="to" name="to" defaultValue={to} />
         </div>
         <button
           type="submit"
-          className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="rounded-md border border-field-line bg-surface px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
         >
           Apply
         </button>
       </form>
 
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-ink-muted">
         {formatBSDate(start)} — {formatBSDate(getDayRangeNepal(to).start)}
       </p>
 
@@ -300,29 +300,29 @@ function Table({
   emptyMessage: string;
 }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-      <table className="min-w-full divide-y divide-slate-200 text-sm">
-        <thead className="bg-slate-50">
+    <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+      <table className="min-w-full divide-y divide-line text-sm">
+        <thead className="bg-page">
           <tr>
             {headers.map((h) => (
-              <th key={h} className="px-4 py-2 text-left font-medium text-slate-500">
+              <th key={h} className="px-4 py-2 text-left font-medium text-ink-muted">
                 {h}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-line-soft">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={headers.length} className="px-4 py-6 text-center text-slate-400">
+              <td colSpan={headers.length} className="px-4 py-6 text-center text-ink-muted">
                 {emptyMessage}
               </td>
             </tr>
           ) : (
             rows.map((row, i) => (
-              <tr key={i} className="hover:bg-slate-50">
+              <tr key={i} className="hover:bg-page">
                 {row.map((cell, j) => (
-                  <td key={j} className="px-4 py-2 text-slate-700">
+                  <td key={j} className="px-4 py-2 text-ink-secondary">
                     {cell}
                   </td>
                 ))}

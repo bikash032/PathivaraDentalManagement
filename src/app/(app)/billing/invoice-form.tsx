@@ -9,7 +9,7 @@ import type { InvoiceFormState } from "./actions";
 type Treatment = { id: string; name: string; code: string; defaultPrice: string };
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500";
+  "w-full rounded-md border border-field-line px-3 py-2 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -17,7 +17,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+      className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "Saving…" : "Create invoice"}
     </button>
@@ -41,25 +41,25 @@ export function InvoiceForm({
   return (
     <form action={formAction} className="space-y-5">
       {state.error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger-ink">
           {state.error}
         </div>
       ) : null}
 
       <div className="space-y-1">
-        <label className="block text-sm font-medium text-slate-700">Patient</label>
+        <label className="block text-sm font-medium text-ink-secondary">Patient</label>
         <PatientPicker name="patientId" initialPatientId={initialPatientId} initialLabel={initialPatientLabel} />
-        {errors.patientId ? <p className="text-xs text-red-600">{errors.patientId}</p> : null}
+        {errors.patientId ? <p className="text-xs text-danger">{errors.patientId}</p> : null}
       </div>
 
       <div>
-        <p className="mb-2 block text-sm font-medium text-slate-700">Items</p>
+        <p className="mb-2 block text-sm font-medium text-ink-secondary">Items</p>
         <InvoiceItemsEditor treatments={treatments} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1">
-          <label htmlFor="discountAmount" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="discountAmount" className="block text-sm font-medium text-ink-secondary">
             Overall discount (NPR)
           </label>
           <input
@@ -75,7 +75,7 @@ export function InvoiceForm({
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="notes" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="notes" className="block text-sm font-medium text-ink-secondary">
           Notes
         </label>
         <textarea id="notes" name="notes" rows={2} className={inputClass} />

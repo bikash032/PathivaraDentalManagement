@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { nepaliPhoneRegex, patientSchema } from "@/lib/validation/patient";
+import {
+  nepaliPhoneRegex,
+  patientSchema,
+  normalizeNepaliPhone,
+  phoneTakenMessage,
+} from "@/lib/validation/patient";
 import { getDayRangeNepal, toNepalDateInputValue } from "@/lib/date";
 import { combineDateTimeNepal } from "@/lib/validation/appointment";
 
@@ -57,5 +62,51 @@ describe("Nepal timezone handling", () => {
   it("handles a time that crosses midnight UTC correctly", () => {
     // 02:00 in Kathmandu is 20:15 UTC on the previous day
     expect(combineDateTimeNepal("2026-09-14", "02:00").toISOString()).toBe("2026-09-13T20:15:00.000Z");
+  });
+});
+
+describe("normalizeNepaliPhone", () => {
+  it.each([
+    ["9852828286", "9852828286"], // already bare
+    ["+9779852828286", "9852828286"], // +977 country code
+    ["9779852828286", "9852828286"], // 977 without the plus
+    ["09852828286", "9852828286"], // trunk zero
+    ["09752828286", "9752828286"],
+    ["985-282-8286", "9852828286"], // punctuation
+    ["985 282 8286", "9852828286"],
+    ["(985) 2828286", "9852828286"],
+    ["+977 985-282-8286", "9852828286"],
+  ])("normalizes %s to %s", (input, expected) => {
+    expect(normalizeNepaliPhone(input)).toBe(expected);
+  });
+
+  it("leaves a valid local number starting with 977 alone", () => {
+    // 9779852828 is a real 10-digit number, not a country code plus a number
+    expect(normalizeNepaliPhone("9779852828")).toBe("9779852828");
+    expect(nepaliPhoneRegex.test(normalizeNepaliPhone("9779852828"))).toBe(true);
+  });
+
+  it("maps every accepted spelling of one number onto the same key", () => {
+    const spellings = ["9852828286", "+9779852828286", "09852828286", "985-282-8286"];
+    const normalized = new Set(spellings.map(normalizeNepaliPhone));
+    expect(normalized.size).toBe(1);
+  });
+
+  it("is applied by patientSchema before validation", () => {
+    const parsed = patientSchema.safeParse({
+      fullName: "Bikash Bishokarma",
+      phone: "+977 985-282-8286",
+      gender: "MALE",
+    });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.phone).toBe("9852828286");
+  });
+});
+
+describe("phoneTakenMessage", () => {
+  it("names the patient holding the number", () => {
+    expect(phoneTakenMessage("Bikash Bishokarma")).toBe(
+      "Phone number is already used by Bikash Bishokarma."
+    );
   });
 });

@@ -16,7 +16,7 @@ type Row = {
 let nextRowId = 0;
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500";
+  "w-full rounded-md border border-field-line px-2 py-1.5 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus";
 
 function emptyRow(): Row {
   return { id: nextRowId++, treatmentId: "", description: "", quantity: 1, unitPrice: "", discount: "0" };
@@ -49,7 +49,7 @@ export function InvoiceItemsEditor({ treatments }: { treatments: Treatment[] }) 
   return (
     <div className="space-y-3">
       {rows.map((row, index) => (
-        <div key={row.id} className="grid grid-cols-1 gap-2 rounded-md border border-slate-200 p-3 sm:grid-cols-12 sm:items-start">
+        <div key={row.id} className="grid grid-cols-1 gap-2 rounded-md border border-line p-3 sm:grid-cols-12 sm:items-start">
           <select
             value={row.treatmentId}
             onChange={(e) => handleTreatmentChange(row.id, e.target.value)}
@@ -102,11 +102,11 @@ export function InvoiceItemsEditor({ treatments }: { treatments: Treatment[] }) 
             className={`${inputClass} sm:col-span-2`}
           />
           <div className="flex items-center justify-between sm:col-span-1">
-            <span className="text-sm text-slate-500">{lineTotals[index].toFixed(2)}</span>
+            <span className="text-sm text-ink-muted">{lineTotals[index].toFixed(2)}</span>
             <button
               type="button"
               onClick={() => setRows((r) => r.filter((_, i) => i !== index))}
-              className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-500 hover:bg-slate-50"
+              className="rounded-md border border-field-line px-2 py-1 text-xs text-ink-muted hover:bg-page"
             >
               ✕
             </button>
@@ -117,12 +117,12 @@ export function InvoiceItemsEditor({ treatments }: { treatments: Treatment[] }) 
       <button
         type="button"
         onClick={() => setRows((r) => [...r, emptyRow()])}
-        className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+        className="rounded-md border border-field-line bg-surface px-3 py-1.5 text-xs font-medium text-ink-secondary hover:bg-page hover:border-secondary hover:text-secondary"
       >
         + Add item
       </button>
 
-      <div className="text-right text-sm text-slate-700">
+      <div className="text-right text-sm text-ink-secondary">
         Subtotal: <span className="font-medium">रु. {subtotal.toFixed(2)}</span>
       </div>
     </div>

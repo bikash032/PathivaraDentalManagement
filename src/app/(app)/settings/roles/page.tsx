@@ -23,15 +23,15 @@ export default async function RolesSettingsPage() {
           <div
             key={role.id}
             data-testid={`role-card-${role.key}`}
-            className="rounded-lg border border-slate-200 bg-white p-5"
+            className="rounded-lg border border-line bg-surface p-5"
           >
             <div className="mb-3 flex items-center justify-between">
               <div>
-                <h2 className="text-sm font-semibold text-slate-900">{role.name}</h2>
-                {role.description ? <p className="text-xs text-slate-500">{role.description}</p> : null}
+                <h2 className="text-sm font-semibold text-ink">{role.name}</h2>
+                {role.description ? <p className="text-xs text-ink-muted">{role.description}</p> : null}
               </div>
               {isSuperAdmin ? (
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
+                <span className="rounded-full bg-line-soft px-2 py-0.5 text-xs font-medium text-ink-muted">
                   Always full access
                 </span>
               ) : null}
@@ -40,18 +40,18 @@ export default async function RolesSettingsPage() {
             <form action={updateRolePermissionsAction.bind(null, role.id)} className="space-y-4">
               {categories.map((category) => (
                 <fieldset key={category} disabled={isSuperAdmin}>
-                  <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-ink-muted">
                     {category}
                   </legend>
                   <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
                     {PERMISSIONS.filter((p) => p.category === category).map((p) => (
-                      <label key={p.key} className="flex items-center gap-2 text-sm text-slate-700">
+                      <label key={p.key} className="flex items-center gap-2 text-sm text-ink-secondary">
                         <input
                           type="checkbox"
                           name="permissionKey"
                           value={p.key}
                           defaultChecked={isSuperAdmin || grantedKeys.has(p.key)}
-                          className="h-4 w-4 rounded border-slate-300"
+                          className="h-4 w-4 rounded border-field-line"
                         />
                         {p.description}
                       </label>
@@ -63,7 +63,7 @@ export default async function RolesSettingsPage() {
               {!isSuperAdmin ? (
                 <button
                   type="submit"
-                  className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
                 >
                   Save permissions
                 </button>

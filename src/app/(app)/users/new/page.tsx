@@ -9,8 +9,8 @@ export default async function NewUserPage() {
 
   return (
     <div className="max-w-md space-y-6">
-      <h1 className="text-xl font-semibold text-slate-900">New user</h1>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <h1 className="text-xl font-semibold text-ink">New user</h1>
+      <div className="rounded-lg border border-line bg-surface p-6">
         <NewUserForm action={createUserAction} roles={roles} />
       </div>
     </div>

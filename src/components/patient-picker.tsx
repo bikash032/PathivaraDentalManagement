@@ -74,11 +74,11 @@ export function PatientPicker({
         onFocus={() => visibleResults.length > 0 && setOpen(true)}
         placeholder="Search by name, phone, or patient ID"
         required
-        className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+        className="w-full rounded-md border border-field-line px-3 py-2 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus"
       />
       <input type="hidden" name={name} value={selectedId} required />
       {open && visibleResults.length > 0 ? (
-        <ul className="absolute z-10 mt-1 w-full max-h-56 overflow-auto rounded-md border border-slate-200 bg-white shadow-lg">
+        <ul className="absolute z-10 mt-1 w-full max-h-56 overflow-auto rounded-md border border-line bg-surface shadow-lg">
           {visibleResults.map((p) => (
             <li key={p.id}>
               <button
@@ -88,10 +88,10 @@ export function PatientPicker({
                   setQuery(`${p.fullName} (${p.patientCode})`);
                   setOpen(false);
                 }}
-                className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50"
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-page"
               >
-                <span className="font-medium text-slate-900">{p.fullName}</span>{" "}
-                <span className="text-slate-400">{p.patientCode} · {p.phone}</span>
+                <span className="font-medium text-ink">{p.fullName}</span>{" "}
+                <span className="text-ink-muted">{p.patientCode} · {p.phone}</span>
               </button>
             </li>
           ))}

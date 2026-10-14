@@ -16,13 +16,14 @@ export default async function EditPatientPage({ params }: { params: Promise<{ id
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">Edit patient</h1>
-        <p className="mt-1 text-sm text-slate-500">{patient.patientCode}</p>
+        <h1 className="text-xl font-semibold text-ink">Edit patient</h1>
+        <p className="mt-1 text-sm text-ink-muted">{patient.patientCode}</p>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div className="rounded-lg border border-line bg-surface p-6">
         <PatientForm
           action={boundAction}
           submitLabel="Save changes"
+          patientId={patient.id}
           initialValues={{
             fullName: patient.fullName,
             phone: patient.phone,

@@ -15,8 +15,8 @@ export default async function EditTreatmentPage({ params }: { params: Promise<{ 
 
   return (
     <div className="max-w-md space-y-6">
-      <h1 className="text-xl font-semibold text-slate-900">Edit treatment</h1>
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <h1 className="text-xl font-semibold text-ink">Edit treatment</h1>
+      <div className="rounded-lg border border-line bg-surface p-6">
         <TreatmentForm
           action={boundAction}
           submitLabel="Save changes"

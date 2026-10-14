@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { requirePermission } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
 import { nextPatientCode } from "@/lib/patient-code";
-import { parsePatientFormData } from "@/lib/validation/patient";
+import { parsePatientFormData, phoneTakenMessage } from "@/lib/validation/patient";
 import { flattenZodErrors } from "@/lib/validation/zod-helpers";
+import { findPhoneOwner, isPhoneUniqueViolation } from "@/lib/patient-phone";
 import { writeAuditLog } from "@/lib/audit";
 import { getRequestIp } from "@/lib/auth/session";
 
@@ -24,26 +25,45 @@ export async function createPatientAction(
   }
 
   const data = parsed.data;
+
+  const phoneOwner = await findPhoneOwner(data.phone);
+  if (phoneOwner) {
+    return {
+      error: "Please fix the errors below.",
+      fieldErrors: { phone: phoneTakenMessage(phoneOwner.fullName) },
+    };
+  }
+
   const patientCode = await nextPatientCode();
 
-  const patient = await db.patient.create({
-    data: {
-      patientCode,
-      fullName: data.fullName,
-      phone: data.phone,
-      alternatePhone: data.alternatePhone || null,
-      address: data.address || null,
-      dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
-      approxAge: data.approxAge ?? null,
-      gender: data.gender,
-      emergencyContactName: data.emergencyContactName || null,
-      emergencyContactPhone: data.emergencyContactPhone || null,
-      medicalNotes: data.medicalNotes || null,
-      allergies: data.allergies || null,
-      notes: data.notes || null,
-      createdById: user.id,
-    },
-  });
+  let patient;
+  try {
+    patient = await db.patient.create({
+      data: {
+        patientCode,
+        fullName: data.fullName,
+        phone: data.phone,
+        alternatePhone: data.alternatePhone || null,
+        address: data.address || null,
+        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+        approxAge: data.approxAge ?? null,
+        gender: data.gender,
+        emergencyContactName: data.emergencyContactName || null,
+        emergencyContactPhone: data.emergencyContactPhone || null,
+        medicalNotes: data.medicalNotes || null,
+        allergies: data.allergies || null,
+        notes: data.notes || null,
+        createdById: user.id,
+      },
+    });
+  } catch (error) {
+    if (!isPhoneUniqueViolation(error)) throw error;
+    const owner = await findPhoneOwner(data.phone);
+    return {
+      error: "Please fix the errors below.",
+      fieldErrors: { phone: phoneTakenMessage(owner?.fullName ?? "another patient") },
+    };
+  }
 
   await writeAuditLog({
     userId: user.id,
@@ -72,23 +92,41 @@ export async function updatePatientAction(
 
   const data = parsed.data;
 
-  await db.patient.update({
-    where: { id },
-    data: {
-      fullName: data.fullName,
-      phone: data.phone,
-      alternatePhone: data.alternatePhone || null,
-      address: data.address || null,
-      dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
-      approxAge: data.approxAge ?? null,
-      gender: data.gender,
-      emergencyContactName: data.emergencyContactName || null,
-      emergencyContactPhone: data.emergencyContactPhone || null,
-      medicalNotes: data.medicalNotes || null,
-      allergies: data.allergies || null,
-      notes: data.notes || null,
-    },
-  });
+  // Excluding `id` lets the patient keep their own number.
+  const phoneOwner = await findPhoneOwner(data.phone, id);
+  if (phoneOwner) {
+    return {
+      error: "Please fix the errors below.",
+      fieldErrors: { phone: phoneTakenMessage(phoneOwner.fullName) },
+    };
+  }
+
+  try {
+    await db.patient.update({
+      where: { id },
+      data: {
+        fullName: data.fullName,
+        phone: data.phone,
+        alternatePhone: data.alternatePhone || null,
+        address: data.address || null,
+        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+        approxAge: data.approxAge ?? null,
+        gender: data.gender,
+        emergencyContactName: data.emergencyContactName || null,
+        emergencyContactPhone: data.emergencyContactPhone || null,
+        medicalNotes: data.medicalNotes || null,
+        allergies: data.allergies || null,
+        notes: data.notes || null,
+      },
+    });
+  } catch (error) {
+    if (!isPhoneUniqueViolation(error)) throw error;
+    const owner = await findPhoneOwner(data.phone, id);
+    return {
+      error: "Please fix the errors below.",
+      fieldErrors: { phone: phoneTakenMessage(owner?.fullName ?? "another patient") },
+    };
+  }
 
   await writeAuditLog({
     userId: user.id,
