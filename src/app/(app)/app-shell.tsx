@@ -5,7 +5,15 @@ import { NAV_ITEMS } from "@/lib/nav";
 import { logoutAction } from "./actions";
 import { NavLinks } from "./nav-links";
 
-export function AppShell({ user, children }: { user: CurrentUser; children: React.ReactNode }) {
+export function AppShell({
+  user,
+  clinicName,
+  children,
+}: {
+  user: CurrentUser;
+  clinicName: string;
+  children: React.ReactNode;
+}) {
   const visibleNavItems = NAV_ITEMS.filter((item) => !item.permission || hasPermission(user, item.permission));
 
   return (
@@ -13,9 +21,7 @@ export function AppShell({ user, children }: { user: CurrentUser; children: Reac
       <div className="flex">
         <aside className="hidden w-56 shrink-0 border-r border-line bg-surface sm:block">
           <div className="border-b border-line px-4 py-4">
-            <p className="text-sm font-semibold text-primary">
-              {process.env.CLINIC_NAME ?? "Pathivara Dental Clinic"}
-            </p>
+            <p className="wrap-break-word text-base font-semibold leading-snug text-primary">{clinicName}</p>
           </div>
           <NavLinks items={visibleNavItems} />
         </aside>

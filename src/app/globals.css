@@ -83,7 +83,14 @@
 body {
   background: var(--color-page);
   color: var(--color-ink);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Arial has no Devanagari glyphs, so Nepali text falls through to Noto. */
+  font-family: Arial, var(--font-devanagari), "Nirmala UI", Mangal, Helvetica, sans-serif;
+}
+
+/* Colour emoji in the slogan; listed fonts cover Windows, Android, macOS/iOS and Linux. */
+.emoji {
+  font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Symbol", sans-serif;
+  font-style: normal;
 }
 
 ::selection {
@@ -160,10 +167,138 @@ button:focus-visible,
   outline-offset: 2px;
 }
 
+/*
+ * Printed documents (src/app/print/*). Sizes are in pt so the A4 result is
+ * predictable; thermal variants override them for 80 mm and 58 mm rolls
+ * (72 mm and 48 mm printable width). Thermal pages add their own @page rule.
+ */
+.print-doc {
+  --doc-name: 20pt;
+  --doc-address: 11pt;
+  --doc-title: 14pt;
+  --doc-label: 9pt;
+  --doc-value: 11pt;
+  --doc-slogan: 10pt;
+  --doc-pad: 2rem;
+
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 190mm;
+  margin-inline: auto;
+  padding: var(--doc-pad);
+  background: #ffffff;
+  color: var(--color-ink);
+  font-size: var(--doc-value);
+  line-height: 1.45;
+  overflow-wrap: break-word;
+}
+/* Free-text values may hold long unbroken tokens; let them wrap anywhere so they never overflow. */
+.print-doc dd,
+.print-doc td {
+  overflow-wrap: anywhere;
+}
+.print-doc th {
+  white-space: nowrap;
+}
+/* Wide report tables: wrap at word boundaries and never clip columns on paper. */
+.print-doc table.report-table td,
+.print-doc table.report-table th {
+  overflow-wrap: normal;
+  white-space: normal;
+}
+@media print {
+  .print-doc .overflow-x-auto {
+    overflow: visible;
+  }
+  .print-doc table.report-table {
+    table-layout: auto;
+    width: 100%;
+  }
+  /* Totals print once, after the last row, not repeated at every page break. */
+  .print-doc table.report-table tfoot {
+    display: table-row-group;
+  }
+}
+.print-doc th + th {
+  padding-left: 0.75rem;
+}
+
+.print-doc[data-paper="80mm"],
+.print-doc[data-paper="58mm"] {
+  --doc-name: 14pt;
+  --doc-address: 9pt;
+  --doc-title: 10pt;
+  --doc-label: 7.5pt;
+  --doc-value: 9pt;
+  --doc-slogan: 8.5pt;
+  --doc-pad: 2mm;
+  margin-inline: 0;
+}
+.print-doc[data-paper="80mm"] {
+  max-width: 72mm;
+}
+.print-doc[data-paper="58mm"] {
+  --doc-name: 12pt;
+  --doc-value: 8.5pt;
+  --doc-slogan: 8pt;
+  max-width: 48mm;
+}
+
+/*
+ * Emphasis (receipts and the patient registration record): every piece of text
+ * prints bold and pure black. Text that was regular weight is also italic;
+ * headings, labels and totals stay upright so they still stand out.
+ */
+.print-doc[data-emphasis] *:not(.emoji) {
+  font-weight: 700;
+  font-style: italic;
+  color: #000000 !important;
+}
+.print-doc[data-emphasis]
+  :is(h1, th, .font-bold, .font-semibold, .font-medium, .font-bold *, .font-semibold *, .font-medium *):not(.emoji) {
+  font-style: normal;
+}
+/* Thermal heads print thin and coloured text faintly: everything pure black there. */
+.print-doc:is([data-paper="80mm"], [data-paper="58mm"]),
+.print-doc:is([data-paper="80mm"], [data-paper="58mm"]) * {
+  color: #000000 !important;
+  border-color: #000000 !important;
+  background-color: transparent !important;
+}
+
+.print-doc table {
+  border-collapse: collapse;
+}
+.print-doc tr,
+.print-doc .keep-together {
+  break-inside: avoid;
+}
+.print-doc thead {
+  display: table-header-group; /* repeat table headings on a new page */
+}
+
 @media print {
   @page {
     size: A4;
-    margin: 15mm;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  .print-doc {
+    max-width: none;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact; /* keep the teal accents */
+  }
+  .print-doc[data-paper="80mm"] {
+    width: 72mm;
+  }
+  .print-doc[data-paper="58mm"] {
+    width: 48mm;
   }
 
   .no-print {

@@ -62,13 +62,16 @@ model User {
 
   role Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
 
-  createdPatients     Patient[]     @relation("PatientCreatedBy")
-  doctorAppointments  Appointment[] @relation("AppointmentDoctor")
-  createdAppointments Appointment[] @relation("AppointmentCreatedBy")
-  doctorVisits        Visit[]       @relation("VisitDoctor")
-  createdVisits       Visit[]       @relation("VisitCreatedBy")
-  createdInvoices     Invoice[]     @relation("InvoiceCreatedBy")
-  receivedPayments    Payment[]     @relation("PaymentReceivedBy")
+  createdPatients     Patient[]           @relation("PatientCreatedBy")
+  doctorAppointments  Appointment[]       @relation("AppointmentDoctor")
+  createdAppointments Appointment[]       @relation("AppointmentCreatedBy")
+  doctorVisits        Visit[]             @relation("VisitDoctor")
+  createdVisits       Visit[]             @relation("VisitCreatedBy")
+  createdInvoices     Invoice[]           @relation("InvoiceCreatedBy")
+  receivedPayments    Payment[]           @relation("PaymentReceivedBy")
+  treatedInvoiceItems InvoiceItem[]       @relation("InvoiceItemDoctor")
+  createdAllocations  PaymentAllocation[] @relation("AllocationCreatedBy")
+  reversedAllocations PaymentAllocation[] @relation("AllocationReversedBy")
   auditLogs           AuditLog[]
   sessions            Session[]
 
@@ -130,6 +133,7 @@ model Patient {
   visits        Visit[]
   prescriptions Prescription[]
   invoices      Invoice[]
+  payments      Payment[]
 
   @@index([fullName])
 }
@@ -161,10 +165,11 @@ model Appointment {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
-  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Restrict)
-  doctor    User    @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: Restrict)
-  createdBy User    @relation("AppointmentCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-  visit     Visit?
+  patient      Patient       @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  doctor       User          @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: Restrict)
+  createdBy    User          @relation("AppointmentCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  visit        Visit?
+  invoiceItems InvoiceItem[]
 
   @@index([doctorId, scheduledAt])
   @@index([patientId])
@@ -281,14 +286,25 @@ model Invoice {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  patient   Patient       @relation(fields: [patientId], references: [id], onDelete: Restrict)
-  visit     Visit?        @relation(fields: [visitId], references: [id], onDelete: SetNull)
-  createdBy User          @relation("InvoiceCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-  items     InvoiceItem[]
-  payments  Payment[]
+  patient     Patient             @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  visit       Visit?              @relation(fields: [visitId], references: [id], onDelete: SetNull)
+  createdBy   User                @relation("InvoiceCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  items       InvoiceItem[]
+  // Cash received at this invoice's counter (historical link). What actually
+  // settles the invoice is `allocations`; `paidAmount` is their active sum.
+  payments    Payment[]
+  allocations PaymentAllocation[]
 
   @@index([patientId])
   @@index([status])
+}
+
+/// Clinical progress of one billed treatment, independent of payment.
+enum TreatmentStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }
 
 model InvoiceItem {
@@ -301,30 +317,85 @@ model InvoiceItem {
   discount    Decimal @default(0) @db.Decimal(12, 2)
   lineTotal   Decimal @db.Decimal(12, 2)
 
-  invoice   Invoice    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  treatment Treatment? @relation(fields: [treatmentId], references: [id], onDelete: SetNull)
+  // Treatment attribution: who performed this item, at which appointment, and
+  // when it was completed. Treatment value, not cash and not payout.
+  doctorId        String?
+  appointmentId   String?
+  // Tooth/teeth treated, as written by the clinic (e.g. "36", "11, 21").
+  tooth           String?
+  treatmentStatus TreatmentStatus @default(PLANNED)
+  completedAt     DateTime?
+
+  invoice     Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  treatment   Treatment?   @relation(fields: [treatmentId], references: [id], onDelete: SetNull)
+  doctor      User?        @relation("InvoiceItemDoctor", fields: [doctorId], references: [id], onDelete: Restrict)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
 
   @@index([invoiceId])
+  @@index([doctorId, completedAt])
+  @@index([appointmentId])
+}
+
+/// RECEIPT = money in (amount > 0); REFUND = money out (amount < 0, linked to
+/// the receipt it returns). Every non-voided row is real cash movement on
+/// `paymentDate`, so collection = SUM(amount); applying credit never adds rows.
+enum PaymentKind {
+  RECEIPT
+  REFUND
 }
 
 model Payment {
-  id              String    @id @default(cuid())
-  invoiceId       String
-  amount          Decimal   @db.Decimal(12, 2)
-  paymentMethodId String
-  paymentDate     DateTime  @default(now())
-  reference       String?
-  notes           String?
-  receivedById    String
-  voidedAt        DateTime?
-  voidReason      String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id                String      @id @default(cuid())
+  patientId         String
+  kind              PaymentKind @default(RECEIPT)
+  // Invoice the cash was taken against; null for an advance or a refund.
+  invoiceId         String?
+  refundOfPaymentId String?
+  amount            Decimal     @db.Decimal(12, 2)
+  paymentMethodId   String
+  paymentDate       DateTime    @default(now())
+  reference         String?
+  notes             String?
+  receivedById      String
+  voidedAt          DateTime?
+  voidReason        String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 
-  invoice       Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
-  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
-  receivedBy    User          @relation("PaymentReceivedBy", fields: [receivedById], references: [id], onDelete: Restrict)
+  patient       Patient             @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  invoice       Invoice?            @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  paymentMethod PaymentMethod       @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
+  receivedBy    User                @relation("PaymentReceivedBy", fields: [receivedById], references: [id], onDelete: Restrict)
+  refundOf      Payment?            @relation("PaymentRefunds", fields: [refundOfPaymentId], references: [id], onDelete: Restrict)
+  refunds       Payment[]           @relation("PaymentRefunds")
+  allocations   PaymentAllocation[]
 
+  @@index([invoiceId])
+  @@index([patientId])
+  @@index([paymentDate])
+  @@index([refundOfPaymentId])
+}
+
+/// Applies part of a receipt to an invoice. Not a cash movement: applying an
+/// advance never counts as collection. Reversals keep the row (reversedAt) so
+/// the history stays auditable; only rows with reversedAt = null are active.
+model PaymentAllocation {
+  id            String    @id @default(cuid())
+  paymentId     String
+  invoiceId     String
+  amount        Decimal   @db.Decimal(12, 2)
+  createdById   String
+  createdAt     DateTime  @default(now())
+  reversedAt    DateTime?
+  reversedById  String?
+  reverseReason String?
+
+  payment    Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  invoice    Invoice @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  createdBy  User    @relation("AllocationCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  reversedBy User?   @relation("AllocationReversedBy", fields: [reversedById], references: [id], onDelete: Restrict)
+
+  @@index([paymentId])
   @@index([invoiceId])
 }
 

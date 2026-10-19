@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 type Treatment = { id: string; name: string; code: string; defaultPrice: string };
+type Doctor = { id: string; name: string };
 
 type Row = {
   id: number;
@@ -11,6 +12,9 @@ type Row = {
   quantity: number;
   unitPrice: string;
   discount: string;
+  doctorId: string;
+  treatmentStatus: string;
+  tooth: string;
 };
 
 let nextRowId = 0;
@@ -19,10 +23,10 @@ const inputClass =
   "w-full rounded-md border border-field-line px-2 py-1.5 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus";
 
 function emptyRow(): Row {
-  return { id: nextRowId++, treatmentId: "", description: "", quantity: 1, unitPrice: "", discount: "0" };
+  return { id: nextRowId++, treatmentId: "", description: "", quantity: 1, unitPrice: "", discount: "0", doctorId: "", treatmentStatus: "PLANNED", tooth: "" };
 }
 
-export function InvoiceItemsEditor({ treatments }: { treatments: Treatment[] }) {
+export function InvoiceItemsEditor({ treatments, doctors }: { treatments: Treatment[]; doctors: Doctor[] }) {
   const [rows, setRows] = useState<Row[]>(() => [emptyRow()]);
 
   function updateRow(id: number, patch: Partial<Row>) {
@@ -96,7 +100,7 @@ export function InvoiceItemsEditor({ treatments }: { treatments: Treatment[] }) 
             type="number"
             min={0}
             step="0.01"
-            placeholder="Discount"
+            placeholder="Less"
             value={row.discount}
             onChange={(e) => updateRow(row.id, { discount: e.target.value })}
             className={`${inputClass} sm:col-span-2`}
@@ -111,6 +115,42 @@ export function InvoiceItemsEditor({ treatments }: { treatments: Treatment[] }) 
               ✕
             </button>
           </div>
+
+          {/* Who performs this treatment and how far along it is; independent of payment. */}
+          <select
+            name="doctorId[]"
+            aria-label="Treating doctor"
+            value={row.doctorId}
+            onChange={(e) => updateRow(row.id, { doctorId: e.target.value })}
+            className={`${inputClass} sm:col-span-5`}
+          >
+            <option value="">Treating doctor (not set)</option>
+            {doctors.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+          <select
+            name="treatmentStatus[]"
+            aria-label="Treatment status"
+            value={row.treatmentStatus}
+            onChange={(e) => updateRow(row.id, { treatmentStatus: e.target.value })}
+            className={`${inputClass} sm:col-span-4`}
+          >
+            <option value="PLANNED">Planned</option>
+            <option value="IN_PROGRESS">In progress</option>
+            <option value="COMPLETED">Completed today</option>
+          </select>
+          <input
+            name="tooth[]"
+            aria-label="Tooth"
+            placeholder="Tooth (e.g. 36)"
+            maxLength={40}
+            value={row.tooth}
+            onChange={(e) => updateRow(row.id, { tooth: e.target.value })}
+            className={`${inputClass} sm:col-span-3`}
+          />
         </div>
       ))}
 

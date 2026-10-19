@@ -12,7 +12,9 @@ export default async function DashboardPage() {
   const timezone = await getClinicTimezone();
 
   const canViewAppointments = hasPermission(user, "appointment.view");
-  const canViewBilling = hasPermission(user, "billing.view");
+  // Clinic-wide money totals are financial reporting, not front-desk billing:
+  // Reception can bill (billing.view) but does not see collection/outstanding.
+  const canViewBilling = hasPermission(user, "billing.view") && hasPermission(user, "report.view");
   const canViewPatients = hasPermission(user, "patient.view");
   const canViewAudit = hasPermission(user, "audit.view");
 

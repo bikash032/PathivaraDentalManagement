@@ -49,6 +49,12 @@ export default async function ReportsPage({
             {r.label}
           </Link>
         ))}
+        <Link
+          href={`/reports/doctor-financial?from=${from}&to=${to}`}
+          className="rounded-md border border-primary bg-primary-soft px-3 py-1.5 text-sm font-medium text-primary hover:bg-surface"
+        >
+          Doctor-wise treatment &amp; financial →
+        </Link>
       </div>
 
       <form className="flex flex-wrap items-end gap-3">
@@ -92,7 +98,9 @@ async function CollectionReport({ start, end }: { start: Date; end: Date }) {
     where: { paymentDate: { gte: start, lt: end }, voidedAt: null },
     include: {
       paymentMethod: { select: { name: true } },
-      invoice: { include: { patient: { select: { fullName: true, patientCode: true } } } },
+      // Advances and refunds have no invoice; the patient is on the payment itself.
+      patient: { select: { fullName: true, patientCode: true } },
+      invoice: { select: { invoiceNumber: true } },
     },
     orderBy: { paymentDate: "desc" },
   });
@@ -117,8 +125,8 @@ async function CollectionReport({ start, end }: { start: Date; end: Date }) {
         headers={["Date", "Patient", "Invoice", "Method", "Amount"]}
         rows={payments.map((p) => [
           formatBSDate(p.paymentDate),
-          p.invoice.patient.fullName,
-          p.invoice.invoiceNumber,
+          p.patient.fullName,
+          p.invoice?.invoiceNumber ?? (p.kind === "REFUND" ? "Refund" : "Advance"),
           p.paymentMethod.name,
           formatNPR(p.amount),
         ])}

@@ -7,6 +7,7 @@ import { InvoiceItemsEditor } from "./invoice-items-editor";
 import type { InvoiceFormState } from "./actions";
 
 type Treatment = { id: string; name: string; code: string; defaultPrice: string };
+type Doctor = { id: string; name: string };
 
 const inputClass =
   "w-full rounded-md border border-field-line px-3 py-2 text-sm focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus";
@@ -27,11 +28,13 @@ function SubmitButton() {
 export function InvoiceForm({
   action,
   treatments,
+  doctors,
   initialPatientId,
   initialPatientLabel,
 }: {
   action: (state: InvoiceFormState, formData: FormData) => Promise<InvoiceFormState>;
   treatments: Treatment[];
+  doctors: Doctor[];
   initialPatientId?: string;
   initialPatientLabel?: string;
 }) {
@@ -54,13 +57,13 @@ export function InvoiceForm({
 
       <div>
         <p className="mb-2 block text-sm font-medium text-ink-secondary">Items</p>
-        <InvoiceItemsEditor treatments={treatments} />
+        <InvoiceItemsEditor treatments={treatments} doctors={doctors} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1">
           <label htmlFor="discountAmount" className="block text-sm font-medium text-ink-secondary">
-            Overall discount (NPR)
+            Overall less (NPR)
           </label>
           <input
             id="discountAmount"

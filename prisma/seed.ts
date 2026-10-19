@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { db } from "../src/lib/db";
 import { PERMISSIONS, ROLE_SEED_DEFS, ROLE_KEYS } from "../src/lib/permissions";
+import { OFFICIAL_CLINIC_ADDRESS, OFFICIAL_CLINIC_NAME } from "../src/lib/clinic-branding";
 
 async function seedPermissions() {
   for (const p of PERMISSIONS) {
@@ -100,7 +101,8 @@ async function seedClinicProfile() {
 
   await db.clinicProfile.create({
     data: {
-      clinicName: process.env.CLINIC_NAME ?? "Pathivara Dental Clinic",
+      clinicName: process.env.CLINIC_NAME || OFFICIAL_CLINIC_NAME,
+      address: OFFICIAL_CLINIC_ADDRESS,
     },
   });
 }

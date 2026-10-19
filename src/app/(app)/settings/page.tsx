@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { getClinicTimezone } from "@/lib/clinic-settings";
+import { OFFICIAL_CLINIC_ADDRESS, OFFICIAL_CLINIC_NAME } from "@/lib/clinic-branding";
 import { ClinicProfileForm } from "./clinic-profile-form";
 import { TimezoneForm } from "./timezone-form";
 import { updateClinicProfileAction, updateTimezoneAction } from "./actions";
@@ -12,8 +13,8 @@ export default async function ClinicProfileSettingsPage() {
       <ClinicProfileForm
         action={updateClinicProfileAction}
         initialValues={{
-          clinicName: profile?.clinicName ?? "Pathivara Dental Clinic",
-          address: profile?.address ?? "",
+          clinicName: profile?.clinicName || OFFICIAL_CLINIC_NAME,
+          address: profile?.address || OFFICIAL_CLINIC_ADDRESS,
           phone: profile?.phone ?? "",
           email: profile?.email ?? "",
           panNumber: profile?.panNumber ?? "",
